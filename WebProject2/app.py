@@ -63,15 +63,11 @@ app = Flask(__name__)
 # and add decorators to define the appropriate resource locators for them.
 
 @app.route('/')
-@app.route('/hello')
-@app.route('/form') 
 
-
-
-def hello():
+def main():
     # Render the page
     html_text = """
-        <h2>Sangeet Pakistan Musician Database V2</h2>
+        <h2>Sangeet Pakistan Musician Database V3</h2>
         
         <form> 
         <input type = \"text\" id = \"search_inp\" name = \"search_inp\"<br>
