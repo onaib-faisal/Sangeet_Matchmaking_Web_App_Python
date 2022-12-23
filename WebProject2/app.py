@@ -1,9 +1,11 @@
+import pyodbc
 from datetime import date, datetime
 from tkinter.tix import Form
 from flask import Flask
 
 class candidate:
-    def __init__(self, Singer_Name, Preferred_Musical_Genre, Gender, Location_City, Country, Negotiable_Hourly_Rate):
+    def __init__(self, Id, Singer_Name, Preferred_Musical_Genre, Gender, Location_City, Country, Negotiable_Hourly_Rate):
+        self.Id = Id
         self.Singer_Name = Singer_Name
         self.Preferred_Musical_Genre = Preferred_Musical_Genre
         self.Gender = Gender
@@ -14,15 +16,33 @@ class candidate:
 candidates_list = []
 
 #Populate data from Database
+conn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};'
+                          'Server=(LocalDB)\MSSQLLocalDB;'
+                          'Database=Sangeet;'
+                          'Integrated Security=true'
+                          'AttachDbFileName="D:\Programming Project\Sangeet.mdf"')
+cursor = conn.cursor()
+result = cursor.execute('SELECT * FROM dbo.Candidates')
 
+#Read data row by row and add to candidate class apended to main list
+for row in result:
+    candidates_list.append(candidate(str(row.Id), 
+                                     row.Singer_Name, 
+                                     row.Preferred_Musical_Genre, 
+                                     row.Gender, 
+                                     row.Location_City, 
+                                     row.Country, 
+                                     str(row.Negotiable_Hourly_Rate)))
+    print(str(row.Id))
+    #print(f'{row.SalesOrderNumber}: {row.TotalDue}')
 
 #Populate list with data
-candidates_list.append(candidate('Ford', 'Mustang', 1964, 'Manchester', 'England', 15))
-candidates_list.append(candidate('Honda', 'Mustang', 1975, 'Manchester', 'England', 15))
-candidates_list.append(candidate('Ferrari', 'Mustang', 1979, 'Manchester', 'England', 15))
-candidates_list.append(candidate('Ford', 'Mustang', 1980, 'Manchester', 'England', 15))
-candidates_list.append(candidate('Ford', 'Mustang', 1999, 'Manchester', 'England', 15))
-candidates_list.append(candidate('Ford', 'Mustang', 2005, 'Manchester', 'England', 15))
+#candidates_list.append(candidate('Ford', 'Mustang', 1964, 'Manchester', 'England', 15))
+#candidates_list.append(candidate('Honda', 'Mustang', 1975, 'Manchester', 'England', 15))
+#candidates_list.append(candidate('Ferrari', 'Mustang', 1979, 'Manchester', 'England', 15))
+#candidates_list.append(candidate('Ford', 'Mustang', 1980, 'Manchester', 'England', 15))
+#candidates_list.append(candidate('Ford', 'Mustang', 1999, 'Manchester', 'England', 15))
+#candidates_list.append(candidate('Ford', 'Mustang', 2005, 'Manchester', 'England', 15))
 
 #Old code, example of a dictionary
 #Candidates = {
@@ -52,7 +72,7 @@ app = Flask(__name__)
 def hello():
     # Render the page
     html_text = """
-        <h2>Sangeet Pakistan Musician Database</h2>
+        <h2>Sangeet Pakistan Musician Database V2</h2>
         
         <form> 
         <input type = \"text\" id = \"search_inp\" name = \"search_inp\"<br>
@@ -67,6 +87,7 @@ def hello():
 
         <table>
             <tr>
+                <th>ID</th>
                 <th>Singer Name</th>
                 <th>Preffered Musical Genre</th>
                 <th>Gender</th>
@@ -87,6 +108,7 @@ def outputRow(c):
     obj1 = c
 
     tmp = "<tr>"
+    tmp += "<td>" + str(obj1.Id) + "</td>"
     tmp += "<td>" + obj1.Singer_Name + "</td>"
     tmp += "<td>" + obj1.Preferred_Musical_Genre + "</td>"
     tmp += "<td>" + str(obj1.Gender) + "</td>"
