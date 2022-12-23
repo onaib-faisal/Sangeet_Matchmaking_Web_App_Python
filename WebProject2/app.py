@@ -1,6 +1,4 @@
 import pyodbc
-from datetime import date, datetime
-from tkinter.tix import Form
 from flask import Flask
 
 class candidate:
@@ -33,8 +31,9 @@ for row in result:
                                      row.Location_City, 
                                      row.Country, 
                                      str(row.Negotiable_Hourly_Rate)))
-    print(str(row.Id))
-    #print(f'{row.SalesOrderNumber}: {row.TotalDue}')
+    
+    #Useful to use print in-conjunction with the cmd console, to see any data / debugging information that is not displayed on the web page.
+    # e.g. print(str(row.Id))
 
 #Populate list with data
 #candidates_list.append(candidate('Ford', 'Mustang', 1964, 'Manchester', 'England', 15))
@@ -99,9 +98,8 @@ def hello():
     for c in candidates_list:
        html_text += outputRow(c)
 
-    html_text += "</table>" 
+    html_text += "</table>"
     return html_text
-    
 
 
 def outputRow(c):
