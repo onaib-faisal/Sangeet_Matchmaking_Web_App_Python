@@ -1,5 +1,5 @@
 import pyodbc
-from flask import Flask
+from flask import Flask, render_template, request, redirect
 
 class candidate:
     def __init__(self, Id, Singer_Name, Preferred_Musical_Genre, Gender, Location_City, Country, Negotiable_Hourly_Rate):
@@ -14,23 +14,23 @@ class candidate:
 candidates_list = []
 
 #Populate data from Database
-conn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};'
-                          'Server=(LocalDB)\MSSQLLocalDB;'
-                          'Database=Sangeet;'
-                          'Integrated Security=true'
-                          'AttachDbFileName="D:\Programming Project\Sangeet.mdf"')
-cursor = conn.cursor()
-result = cursor.execute('SELECT * FROM dbo.Candidates')
+def connection():    
+    conn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};'
+                                  'Server=(LocalDB)\MSSQLLocalDB;'
+                                  'Database=Sangeet;'
+                                  'Integrated Security=true'
+                                  'AttachDbFileName="D:\Programming Project\Sangeet.mdf"')
+    return conn
 
 #Read data row by row and add to candidate class apended to main list
-for row in result:
-    candidates_list.append(candidate(str(row.Id), 
-                                     row.Singer_Name, 
-                                     row.Preferred_Musical_Genre, 
-                                     row.Gender, 
-                                     row.Location_City, 
-                                     row.Country, 
-                                     str(row.Negotiable_Hourly_Rate)))
+#for row in result:
+#    candidates_list.append(candidate(str(row.Id), 
+#                                     row.Singer_Name, 
+#                                     row.Preferred_Musical_Genre, 
+#                                     row.Gender, 
+#                                     row.Location_City, 
+#                                     row.Country, 
+#                                     str(row.Negotiable_Hourly_Rate)))
     
     #Useful to use print in-conjunction with the cmd console, to see any data / debugging information that is not displayed on the web page.
     # e.g. print(str(row.Id))
@@ -66,52 +66,82 @@ app = Flask(__name__)
 
 def main():
     # Render the page
-    html_text = """
-        <h2>Sangeet Pakistan Musician Database V3</h2>
+#    html_text = """
+#        <h2>Sangeet Pakistan Musician Database V3</h2>
         
-        <form> 
-        <input type = \"text\" id = \"search_inp\" name = \"search_inp\"<br>
-        <input type = \"button\" value = \"Search Musician\">
-        </form>
+#        <form> 
+#        <input type = \"text\" id = \"search_inp\" name = \"search_inp\"<br>
+#        <input type = \"button\" value = \"Search Musician\">
+#        </form>
         
-        <style>
-        table, th, td {
-        border:1px solid black;
-        }
-        </style>
+#        <style>
+#        table, th, td {
+#        border:1px solid black;
+#        }
+#        </style>
 
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Singer Name</th>
-                <th>Preffered Musical Genre</th>
-                <th>Gender</th>
-                <th>Location/City</th>
-                <th>Country</th>
-                <th>Negotiable Hourly Rate</th>
-            </tr>"""
+#        <table>
+#            <tr>
+#                <th>ID</th>
+#                <th>Singer Name</th>
+#                <th>Preffered Musical Genre</th>
+#                <th>Gender</th>
+#                <th>Location/City</th>
+#                <th>Country</th>
+#                <th>Negotiable Hourly Rate</th>
+#            </tr>"""
 
-    for c in candidates_list:
-       html_text += outputRow(c)
+#    for c in candidates_list:
+#       html_text += outputRow(c)
 
-    html_text += "</table>"
-    return html_text
+#    html_text += "</table>"
+#    return html_text
 
 
-def outputRow(c):
-    obj1 = c
+#def outputRow(c):
+#    obj1 = c
 
-    tmp = "<tr>"
-    tmp += "<td>" + str(obj1.Id) + "</td>"
-    tmp += "<td>" + obj1.Singer_Name + "</td>"
-    tmp += "<td>" + obj1.Preferred_Musical_Genre + "</td>"
-    tmp += "<td>" + str(obj1.Gender) + "</td>"
-    tmp += "<td>" + obj1.Location_City + "</td>"
-    tmp += "<td>" + obj1.Country + "</td>"
-    tmp += "<td>" + str(obj1.Negotiable_Hourly_Rate) + "</td>"
-    tmp += "</tr>"
+#    tmp = "<tr>"
+#    tmp += "<td>" + str(obj1.Id) + "</td>"
+#    tmp += "<td>" + obj1.Singer_Name + "</td>"
+#    tmp += "<td>" + obj1.Preferred_Musical_Genre + "</td>"
+#    tmp += "<td>" + str(obj1.Gender) + "</td>"
+#    tmp += "<td>" + obj1.Location_City + "</td>"
+#    tmp += "<td>" + obj1.Country + "</td>"
+#    tmp += "<td>" + str(obj1.Negotiable_Hourly_Rate) + "</td>"
+#    tmp += "</tr>"
 
-    return tmp
+#    return tmp
+
+    candidates_list = []
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM dbo.Candidates")
+    for row in cursor.fetchall():
+        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+    conn.close()
+    return render_template("singerslist.html", candidates_list = candidates_list)
+
+@app.route("/addSinger", methods = ['GET','POST'])
+#Function to add Singer into database
+def addSinger():
+    if request.method == 'GET':
+        return render_template("addSinger.html", singer = {})
+    if request.method == 'POST':
+        Id = request.form["Id"]
+        Singer_Name = request.form["Singer_Name"]
+        Gender = request.form["Gender"]
+        Preferred_Musical_Genre = request.form["Preferred_Musical_Genre"]
+        Location_City = request.form["Location_City"]
+        Country = request.form["Country"]
+        Negotiable_Hourly_Rate = float(request.form["Negotiable_Hourly_Rate"])
+        conn = connection()
+        cursor = conn.cursor()
+        cursor.execute("""SET IDENTITY_INSERT dbo.Candidates ON INSERT INTO dbo.Candidates (Id, Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate) VALUES (?, ?, ?, ?, ?, ?, ?)""", Id, Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate)
+        conn.commit()
+        conn.close()
+        return redirect('/')
+
 
 if __name__ == '__main__':
     # Run the app server on localhost:4449
