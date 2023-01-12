@@ -1,5 +1,5 @@
 import pyodbc
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, send_from_directory, g
 
 class candidate:
     def __init__(self, Id, Singer_Name, Preferred_Musical_Genre, Gender, Location_City, Country, Negotiable_Hourly_Rate):
@@ -122,13 +122,13 @@ def main():
     conn.close()
     return render_template("singerslist.html", candidates_list = candidates_list)
 
-@app.route("/addSinger", methods = ['GET','POST'])
+@app.route("/searchSinger", methods = ['GET','POST'])
 #Function to add Singer into database
-def addSinger():
+def searchSinger():
     if request.method == 'GET':
-        return render_template("addSinger.html", singer = {})
+        return render_template("singerSearch.html", singer = {})
     if request.method == 'POST':
-        Id = request.form["Id"]
+        #Id = request.form["Id"]
         Singer_Name = request.form["Singer_Name"]
         Gender = request.form["Gender"]
         Preferred_Musical_Genre = request.form["Preferred_Musical_Genre"]
@@ -137,10 +137,27 @@ def addSinger():
         Negotiable_Hourly_Rate = float(request.form["Negotiable_Hourly_Rate"])
         conn = connection()
         cursor = conn.cursor()
-        cursor.execute("""SET IDENTITY_INSERT dbo.Candidates ON INSERT INTO dbo.Candidates (Id, Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate) VALUES (?, ?, ?, ?, ?, ?, ?) SET IDENTITY_INSERT dbo.Candidates OFF""", Id, Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate)
+        cursor.execute("""SET IDENTITY_INSERT dbo.Candidates OFF INSERT INTO dbo.Candidates (Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate) VALUES (?, ?, ?, ?, ?, ?) SET IDENTITY_INSERT dbo.Candidates OFF""", Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate)
         conn.commit()
         conn.close()
         return redirect('/')
+
+@app.route("/addSinger", methods = ['GET','POST'])
+#Function to add Singer into database
+def addSinger():
+    if request.method == 'GET':
+        return render_template("addSinger.html", singer = {})
+    if request.method == 'POST':
+        singerFilters = {
+        'Singer_Name': request.args.get('Singer_Name'),
+        'Gender': request.args.get('Gender'),
+        'Preferred_Musical_Genre': request.args.get('Preferred_Musical_Genre'),
+        'Location_City': request.args.get('Location_City'),
+        'Country': request.args.get('Country'),
+        'Negotiable_Hourly_Rate': request.args.get('Negotiable_Hourly_Rate') 
+    }
+    print(singerFilters)
+    #return render_template('search_results.html', results=search_results)
 
 
 @app.route('/updateSinger/<int:Id>',methods = ['GET','POST'])
@@ -175,6 +192,9 @@ def deleteSinger(Id):
     conn.commit()
     conn.close()
     return redirect('/')
+
+
+
 
 if __name__ == '__main__':
     # Run the app server on localhost:4449
