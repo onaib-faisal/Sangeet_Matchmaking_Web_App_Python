@@ -14,25 +14,31 @@
 
 <body>
     <h2>Search Singer</h2>
-    <form action="/search" method="GET">
-        <label for="Singer_Name">Singer Name:</label>
-        <input type="text" id="Singer_Name" name="Singer_Name">
-        <br>
-        <label for="Gender">Singer's Gender:</label>
-        <input type="text" id="Gender" name="Gender">
-        <br>
-        <label for="Preferred_Musical_Genre">Muscial Genre:</label>
-        <input type="text" id="Preferred_Musical_Genre" name="Preferred_Musical_Genre">
-        <br>
-        <label for="Location_City">Location/City:</label>
-        <input type="text" id="Location_City" name="Location_City">
-        <br>
-        <label for="Country">Country:</label>
-        <input type="text" id="Country" name="Country">
-        <br>
-        <br>
-        <label for="Negotiable_Hourly_Rate">Negotiable Hourly Rate:</label>
-        <input type="text" id="Negotiable_Hourly_Rate" name="Negotiable_Hourly_Rate">
+    <form action="/searchResults" method="GET">
+        <div class="form-group row">
+            <label for="Singer_Name">Singer Name:</label>
+            <input type="text" class="form-control" id="Singer_Name" name="Singer_Name">
+        </div>
+        <div class="form-group row">
+            <label for="Gender">Singer's Gender:</label>
+            <input type="text" class="form-control" id="Gender" name="Gender">
+        </div>
+        <div class="form-group row">
+            <label for="Preferred_Musical_Genre">Muscial Genre:</label>
+            <input type="text" class="form-control" id="Preferred_Musical_Genre" name="Preferred_Musical_Genre">
+        </div>
+        <div class="form-group row">
+            <label for="Location_City">Location/City:</label>
+            <input type="text" class="form-control" id="Location_City" name="Location_City">
+        </div>
+        <div class="form-group row">
+            <label for="Country">Country:</label>
+            <input type="text" class="form-control" id="Country" name="Country">
+        </div>
+        <div class="form-group row">
+            <label for="Negotiable_Hourly_Rate">Negotiable Hourly Rate:</label>
+            <input type="text" class="form-control" id="Negotiable_Hourly_Rate" name="Negotiable_Hourly_Rate">
+        </div>
         <br>
         <input type="submit" value="Search">
     </form>

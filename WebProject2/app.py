@@ -22,36 +22,6 @@ def connection():
                                   'AttachDbFileName="D:\Programming Project\Sangeet.mdf"')
     return conn
 
-#Read data row by row and add to candidate class apended to main list
-#for row in result:
-#    candidates_list.append(candidate(str(row.Id), 
-#                                     row.Singer_Name, 
-#                                     row.Preferred_Musical_Genre, 
-#                                     row.Gender, 
-#                                     row.Location_City, 
-#                                     row.Country, 
-#                                     str(row.Negotiable_Hourly_Rate)))
-    
-    #Useful to use print in-conjunction with the cmd console, to see any data / debugging information that is not displayed on the web page.
-    # e.g. print(str(row.Id))
-
-#Populate list with data
-#candidates_list.append(candidate('Ford', 'Mustang', 1964, 'Manchester', 'England', 15))
-#candidates_list.append(candidate('Honda', 'Mustang', 1975, 'Manchester', 'England', 15))
-#candidates_list.append(candidate('Ferrari', 'Mustang', 1979, 'Manchester', 'England', 15))
-#candidates_list.append(candidate('Ford', 'Mustang', 1980, 'Manchester', 'England', 15))
-#candidates_list.append(candidate('Ford', 'Mustang', 1999, 'Manchester', 'England', 15))
-#candidates_list.append(candidate('Ford', 'Mustang', 2005, 'Manchester', 'England', 15))
-
-#Old code, example of a dictionary
-#Candidates = {
-#  "Singer_Name": "Ford",
-#  "Preferred_Musical_Genre": "Mustang",
-#  "Gender": 1964,
-#  "Location_City": "Manchester",
-#  "Country": "England",
-#  "Negotiable_Hourly_Rate" : 15
-#}
 
 # Create an instance of the Flask class that is the WSGI application.
 # The first argument is the name of the application module or package,
@@ -65,53 +35,7 @@ app = Flask(__name__)
 @app.route('/')
 
 def main():
-    # Render the page
-#    html_text = """
-#        <h2>Sangeet Pakistan Musician Database V3</h2>
-        
-#        <form> 
-#        <input type = \"text\" id = \"search_inp\" name = \"search_inp\"<br>
-#        <input type = \"button\" value = \"Search Musician\">
-#        </form>
-        
-#        <style>
-#        table, th, td {
-#        border:1px solid black;
-#        }
-#        </style>
 
-#        <table>
-#            <tr>
-#                <th>ID</th>
-#                <th>Singer Name</th>
-#                <th>Preffered Musical Genre</th>
-#                <th>Gender</th>
-#                <th>Location/City</th>
-#                <th>Country</th>
-#                <th>Negotiable Hourly Rate</th>
-#            </tr>"""
-
-#    for c in candidates_list:
-#       html_text += outputRow(c)
-
-#    html_text += "</table>"
-#    return html_text
-
-
-#def outputRow(c):
-#    obj1 = c
-
-#    tmp = "<tr>"
-#    tmp += "<td>" + str(obj1.Id) + "</td>"
-#    tmp += "<td>" + obj1.Singer_Name + "</td>"
-#    tmp += "<td>" + obj1.Preferred_Musical_Genre + "</td>"
-#    tmp += "<td>" + str(obj1.Gender) + "</td>"
-#    tmp += "<td>" + obj1.Location_City + "</td>"
-#    tmp += "<td>" + obj1.Country + "</td>"
-#    tmp += "<td>" + str(obj1.Negotiable_Hourly_Rate) + "</td>"
-#    tmp += "</tr>"
-
-#    return tmp
 
     candidates_list = []
     conn = connection()
@@ -122,11 +46,11 @@ def main():
     conn.close()
     return render_template("singerslist.html", candidates_list = candidates_list)
 
-@app.route("/searchSinger", methods = ['GET','POST'])
+@app.route("/addSinger", methods = ['GET','POST'])
 #Function to add Singer into database
-def searchSinger():
+def addSinger():
     if request.method == 'GET':
-        return render_template("singerSearch.html", singer = {})
+        return render_template("addSinger.html", singer = {})
     if request.method == 'POST':
         #Id = request.form["Id"]
         Singer_Name = request.form["Singer_Name"]
@@ -142,13 +66,20 @@ def searchSinger():
         conn.close()
         return redirect('/')
 
-@app.route("/addSinger", methods = ['GET','POST'])
-#Function to add Singer into database
-def addSinger():
+@app.route("/searchSinger", methods = ['GET','POST'])
+#Function to search Singer from database
+def searchSinger():
     if request.method == 'GET':
-        return render_template("addSinger.html", singer = {})
-    if request.method == 'POST':
-        singerFilters = {
+        return render_template("singerSearch.html", singer = {})
+   
+
+
+
+
+
+@app.route('/searchResults', methods = ['GET','POST'])
+def searchResults():
+    singerFilters = {
         'Singer_Name': request.args.get('Singer_Name'),
         'Gender': request.args.get('Gender'),
         'Preferred_Musical_Genre': request.args.get('Preferred_Musical_Genre'),
@@ -156,9 +87,37 @@ def addSinger():
         'Country': request.args.get('Country'),
         'Negotiable_Hourly_Rate': request.args.get('Negotiable_Hourly_Rate') 
     }
-    print(singerFilters)
-    #return render_template('search_results.html', results=search_results)
+    
+    searchResults = search_songs(singerFilters)
+    return render_template('searchResults.html', results=searchResults)
 
+def search_songs(filters):
+    query = "SELECT * FROM dbo.Candidates"
+    conditions = []
+    if filters['Singer_Name']:
+        conditions.append("Singer_Name LIKE '%{}%'".format(filters['Singer_Name']))
+    if filters['Gender']:
+        conditions.append("Gender LIKE '%{}%'".format(filters['Gender']))
+    if filters['Preferred_Musical_Genre']:
+        conditions.append("Preferred_Musical_Genre LIKE '%{}%'".format(filters['Preferred_Musical_Genre']))
+    if filters['Location_City']:
+        conditions.append("genre LIKE '%{}%'".format(filters['Location_City']))
+    if filters['Country']:
+        conditions.append("Country = '{}'".format(filters['Country']))
+    if filters['Negotiable_Hourly_Rate']:
+        conditions.append("Negotiable_Hourly_Rate = '{}'".format(filters['Negotiable_Hourly_Rate']))
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+    print(query)
+
+    candidates_list = []
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute(query)
+    for row in cursor.fetchall():
+        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+    conn.close()
+    return candidates_list
 
 @app.route('/updateSinger/<int:Id>',methods = ['GET','POST'])
 #Function to edit singer details
