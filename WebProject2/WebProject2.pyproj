@@ -30,11 +30,11 @@
     <Compile Include="app.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Images\" />
+    <Folder Include="static\" />
     <Folder Include="templates\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\logo.png" />
+    <Content Include="static\logo.png" />
     <Content Include="templates\addSinger.html" />
     <Content Include="templates\searchResults.html" />
     <Content Include="templates\singerslist.html" />
