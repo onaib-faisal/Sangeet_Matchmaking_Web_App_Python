@@ -40,6 +40,7 @@
     <Content Include="templates\singerslist.html" />
     <Content Include="templates\singerSearch.html" />
     <Content Include="templates\landingPage.html" />
+    <Content Include="templates\admin.html" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 

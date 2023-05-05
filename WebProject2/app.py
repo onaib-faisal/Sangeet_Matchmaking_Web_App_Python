@@ -1,5 +1,5 @@
 import pyodbc
-from flask import Flask, render_template, request, redirect, send_from_directory, g
+from flask import Flask, render_template, request, redirect, send_from_directory, g, jsonify
 
 class candidate:
     def __init__(self, Id, Singer_Name, Preferred_Musical_Genre, Gender, Location_City, Country, Negotiable_Hourly_Rate):
@@ -33,9 +33,32 @@ app = Flask(__name__)
 # and add decorators to define the appropriate resource locators for them.
 
 @app.route('/')
-
 def main():
     return render_template('landingPage.html')
+
+@app.route('/fetchSingers')
+def get_singers():
+    candidates_list = []
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM dbo.Candidates")
+    for row in cursor.fetchall():
+        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+    conn.close()
+    return jsonify(candidates_list)
+
+@app.route('/admin')
+def admin_portal():
+    return render_template('admin.html')
+def singerslist():
+    candidates_list = []
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM dbo.Candidates")
+    for row in cursor.fetchall():
+        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+    conn.close()
+    return render_template("admin.html", candidates_list = candidates_list)
 
 @app.route('/singerslist')
 def singerslist():
