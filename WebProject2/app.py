@@ -35,8 +35,10 @@ app = Flask(__name__)
 @app.route('/')
 
 def main():
+    return render_template('landingPage.html')
 
-
+@app.route('/singerslist')
+def singerslist():
     candidates_list = []
     conn = connection()
     cursor = conn.cursor()
@@ -45,6 +47,7 @@ def main():
         candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
     conn.close()
     return render_template("singerslist.html", candidates_list = candidates_list)
+
 
 @app.route("/addSinger", methods = ['GET','POST'])
 #Function to add Singer into database
@@ -106,8 +109,7 @@ def search_songs(filters):
         conditions.append("Country = '{}'".format(filters['Country']))
     if filters['Negotiable_Hourly_Rate']:
         conditions.append("Negotiable_Hourly_Rate = '{}'".format(filters['Negotiable_Hourly_Rate']))
-    if conditions:
-        query += " WHERE " + " AND ".join(conditions)
+    if conditions:query += " WHERE " + " AND ".join(conditions)
     print(query)
 
     candidates_list = []

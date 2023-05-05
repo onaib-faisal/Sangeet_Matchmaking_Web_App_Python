@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+
+<head>
+    <title>Landing Page</title>
+
+    <link rel="stylesheet" crossorigin="anonymous"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+
+    <script crossorigin="anonymous"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS for the header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+        }
+
+            .header h1, h2 {
+                font-family: 'Poppins', sans-serif;
+                font-weight: 500;
+                font-size: 17px;
+                color: #2980B9;
+                margin: 0;
+            }
+
+        /* Custom CSS for the button styles */
+        .btn-custom {
+            background-color: #FFBB16;
+            color: #000;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 20px;
+            padding: 20px 40px;
+            margin: 20px;
+            border-radius: 50px;
+        }
+
+        /* Custom CSS for the question prompt */
+        .question-prompt {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 23px;
+            text-align: center;
+            margin-top: 5rem;
+        }
+
+        /* Custom CSS for the information tooltip */
+        .tooltip-custom {
+            font-size: 1.5rem;
+            color: #2980B9;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            right: -30px;
+            transform: translateY(-50%);
+        }
+
+            .tooltip-custom:hover .tooltip-text {
+                display: block;
+            }
+
+        .tooltip-text {
+            display: none;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            width: 300px;
+            text-align: center;
+            font-size: 1rem;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header with logo, organization name, and page title -->
+    <div class="header">
+        <h1>Sangeet Pakistan</h1>
+        <img src="static\logo.png" width="120" height="100" alt="Sangeet Pakistan Logo">
+        <h2>Landing Page</h2>
+    </div>
+    <!-- Question prompt -->
+    <h3 class="question-prompt">Please choose the type of user that best suits you.</h3>
+    <!-- Buttons for different user types -->
+    <div class="d-flex justify-content-center flex-wrap mt-5">
+        <a class="btn btn-custom" href="singerslist">Musician</a>
+        <a class="btn btn-custom" href="singerslist">Admin</a>
+        <div class="position-relative d-inline-flex">
+            <a class="btn btn-custom" href="singerslist">External</a>
+            <div class="tooltip-custom">?
+            <span class="tooltip-text">External users include agencies, institutes, and event managers</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
