@@ -140,6 +140,42 @@
         </table>
     </div>
 
+    <!-- Musician Login table -->
+    <div id="musician-login-table" class="d-none">
+        <div class="button-container" style="display: flex; justify-content: center;">
+            <div class="addMusicianLogin-btn">
+                <a class="btn btn-custom2" href="addMusicianLogin">Add to the table</a>
+            </div>
+            <div class="searchMusicianLogin-btn">
+                <a class="btn btn-custom2" href="searchMusicianLogin">Search from the table</a>
+            </div>
+        </div>
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Password (Hashed)</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for singer in candidates_list %}
+                <tr>
+                    <td>{{ singer.Id }}</td>
+                    <td>{{ singer.username }}</td>
+                    <td>{{ singer.password }}</td>
+                    <td><a href='updateSingerLogin/{{ singer.Id }}'>Edit</a></td>
+                    <td><a href='deleteSingerLogin/{{ singer.Id }}'>Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
     <script>
 function fetchSingers() {
             fetch('/fetchSingers')
@@ -150,25 +186,49 @@ function fetchSingers() {
 
                     candidates_list.forEach(singer => {
                         let row = `<tr>
-                                <td>${singer.Id}</td>
-                                <td>${singer.Singer_Name}</td>
-                                <td>${singer.Gender}</td>
-                                <td>${singer.Preferred_Musical_Genre}</td>
-                                <td>${singer.Location_City}</td>
-                                <td>${singer.Country}</td>
-                                <td>${singer.Negotiable_Hourly_Rate}</td>
-                                <td><a href='updateSinger/${singer.Id}'>Edit</a></td>
-                                <td><a href='deleteSinger/${singer.Id}'>Delete</a></td>
-                            </tr>`;
+                                        <td>${singer.Id}</td>
+                                        <td>${singer.Singer_Name}</td>
+                                        <td>${singer.Gender}</td>
+                                        <td>${singer.Preferred_Musical_Genre}</td>
+                                        <td>${singer.Location_City}</td>
+                                        <td>${singer.Country}</td>
+                                        <td>${singer.Negotiable_Hourly_Rate}</td>
+                                        <td><a href='updateSinger/${singer.Id}'>Edit</a></td>
+                                        <td><a href='deleteSinger/${singer.Id}'>Delete</a></td>
+                                    </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
+}
+
+function fetchMusicianLogins() {
+    fetch('/get_musician_logins')
+        .then(response => response.json())
+        .then(musician_logins_list => {
+            let tableBody = document.querySelector('#musician-login-table tbody');
+            tableBody.innerHTML = '';
+
+            musician_logins_list.forEach(singer_login => {
+                let row = `<tr>
+                    <td>${singer_login.Id}</td>
+                    <td>${singer_login.username}</td>
+                    <td>${singer_login.password}</td>
+                    <td><a href='updateSingerLogin/${singer_login.Id}'>Edit</a></td>
+                    <td><a href='deleteSingerLogin/${singer_login.Id}'>Delete</a></td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        });
 }
 
 document.querySelector('.form-select').addEventListener('change', function (e) {
             if (e.target.value === '1') {
                 document.getElementById('singer-table').classList.remove('d-none');
                 fetchSingers();
+            } else if (e.target.value === '2') {
+            document.getElementById('singer-table').classList.add('d-none');
+            document.getElementById('musician-login-table').classList.remove('d-none');
+            fetchMusicianLogins(); 
             } else {
                 document.getElementById('singer-table').classList.add('d-none');
             }

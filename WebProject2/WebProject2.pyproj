@@ -35,8 +35,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="static\logo.png" />
+    <Content Include="templates\addMusicianLogin.html" />
     <Content Include="templates\addSinger.html" />
+    <Content Include="templates\loginSearchResults.html" />
     <Content Include="templates\searchResults.html" />
+    <Content Include="templates\singerLoginSearch.html" />
     <Content Include="templates\singerslist.html" />
     <Content Include="templates\singerSearch.html" />
     <Content Include="templates\landingPage.html" />

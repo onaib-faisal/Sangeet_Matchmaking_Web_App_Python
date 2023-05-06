@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <title>Search Singer</title>
+
+    <link rel="stylesheet" crossorigin="anonymous"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+
+    <script crossorigin="anonymous"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</head>
+
+<body>
+    <h2>Search Singer Login</h2>
+    <form action="/singerLoginSearchResults" method="GET">
+        <div class="form-group row">
+            <label for="ID">Musician ID (Check from Musicians' Table)</label>
+            <input type="text" class="form-control" name="Id" id="Id" value="{{singer.Id}}">
+        </div>
+        <div class="form-group row">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" name="username" id="username" value="{{singer.username}}">
+        </div>
+        <br>
+        <input type="submit" value="Search">
+    </form>
+</body>
+</html>
