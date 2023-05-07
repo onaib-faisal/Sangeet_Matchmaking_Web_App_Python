@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <!-- Set the title of the page -->
+    <title>Admin Login Details</title>
+
+    <!-- Include the Bootstrap CSS library from the CDN -->
+    <link rel="stylesheet" crossorigin="anonymous"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+
+    <!-- Include the Bootstrap JS bundle library from the CDN -->
+    <script crossorigin="anonymous"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
+    </script>
+</head>
+
+<body>
+    <!-- Display the title of the form -->
+    <h2>Admin Login Details</h2>
+
+    <!-- Create the form to input Admin login details -->
+    <form action="" method="POST">
+        <!-- Admin ID input field -->
+        <div class="form-group row">
+            <label for="ID">Admin ID (Check from Admins' Table)</label>
+            <input type="text" class="form-control" name="Id" id="Id" value="{{admin.Id}}">
+        </div>
+        <!-- Username input field -->
+        <div class="form-group row">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" name="username" id="username" value="{{admin.username}}">
+        </div>
+        <!-- Password input field -->
+        <div class="form-group row">
+            <label for="password">Password (plain text)</label>
+            <input type="text" class="form-control" name="password" id="password" value="{{admin.password}}">
+        </div>
+        <!-- Add button to submit the form -->
+        <button type="btnAdd" class="btn btn-primary">Add</button>
+        <!-- Discard button to cancel and navigate to /admin page -->
+        <a href="/admin" class="btn btn-primary">Discard</a>
+    </form>
+</body>
+</html>

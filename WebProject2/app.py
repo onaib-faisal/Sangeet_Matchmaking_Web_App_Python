@@ -198,7 +198,7 @@ def deleteSingerLogin(Id):
 # Route to retrieve all external logins
 @app.route('/get_external_logins')
 def get_external_logins():
-    # Initialize an empty list to store musician login records
+    # Initialize an empty list to store external login records
     external_logins_list = []
     # Establish a connection to the database
     conn = connection()
@@ -209,7 +209,7 @@ def get_external_logins():
     for row in cursor.fetchall():
         external_logins_list.append({"Id": row[0], "username": row[1], "password": row[2]})
     conn.close()
-    # Return the list of musician logins as a JSON object
+    # Return the list of external logins as a JSON object
     #print(external_logins_list) ##for debugging##
     return jsonify(external_logins_list)
 
@@ -330,6 +330,80 @@ def deleteExternalLogin(Id):
     # Redirect to the /admin page
     return redirect('/admin')
  
+
+# Dropdown option 4 - Admin login details
+# Route to retrieve all admin logins
+@app.route('/get_admin_logins')
+def get_admin_logins():
+    # Initialize an empty list to store admin login records
+    admin_logins_list = []
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Execute a query to fetch all records from the AdminLogin table
+    cursor.execute("SELECT * FROM dbo.AdminLogin")
+    # Iterate through the fetched records and append them to the admin_logins_list
+    for row in cursor.fetchall():
+        admin_logins_list.append({"Id": row[0], "username": row[1], "password": row[2]})
+    conn.close()
+    # Return the list of admin logins as a JSON object
+    #print(admin_logins_list) ##for debugging##
+    return jsonify(admin_logins_list)
+
+# Route to add an admin login record
+@app.route("/addAdminLogin", methods=['GET', 'POST'])
+def addAdminLogin():
+    # Handle the GET request to display the addAdminLogin form
+    if request.method == 'GET':
+        return render_template("addAdminLogin.html", admin={})
+    # Handle the POST request to submit the form and add the admin login record to the database
+    if request.method == 'POST':
+        Id = request.form["Id"]
+        username = request.form["username"]
+        password = request.form["password"]
+        # Establish a connection to the database
+        conn = connection()
+        cursor = conn.cursor()
+        # Execute a query to insert the new admin login record into the AdminLogin table
+        cursor.execute("""SET IDENTITY_INSERT dbo.AdminLogin ON INSERT INTO dbo.AdminLogin (Id, username, password) VALUES (?, ?, ?) SET IDENTITY_INSERT dbo.AdminLogin OFF""", Id, username, password)
+        # Commit the transaction
+        conn.commit()
+        # Close the database connection
+        conn.close()
+        # Redirect to the /admin page
+        return redirect('/admin')
+
+# Route to update a Admin login record
+@app.route('/updateAdminLogin/<int:Id>', methods=['GET', 'POST'])
+def updateAdminLogin(Id):
+    # Initialize an empty list to store the Admin login record
+    cr = []
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Handle the GET request to display the updateAdminLogin form with the existing record data
+    if request.method == 'GET':
+        # Execute a query to fetch the existing record from the AdminLogin table
+        cursor.execute("SELECT * FROM dbo.AdminLogin WHERE Id = ?", Id)
+        # Iterate through the fetched records and append them to the cr list
+        for row in cursor.fetchall():
+            cr.append({"Id": row[0], "username": row[1], "password": row[2]})
+        # Close the database connection
+        conn.close()
+        # Render the updateAdminLogin form with the existing record data
+        return render_template("addAdminLogin.html", admin=cr[0])
+    # Handle the POST request to submit the form and update the Admin login record in the database
+    if request.method == 'POST':
+        username = request.form["username"]
+        password = request.form["password"]
+        # Execute a query to update the existing Admin login record in the AdminLogin table
+        cursor.execute("UPDATE dbo.AdminLogin SET username = ?, password = ? WHERE Id = ?", username, password, Id)
+        # Commit the transaction
+        conn.commit()
+        # Close the database connection
+        conn.close()
+        # Redirect to the /admin page
+        return redirect('/admin')
 
 
 

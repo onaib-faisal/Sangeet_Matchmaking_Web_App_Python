@@ -36,6 +36,7 @@
   <ItemGroup>
     <Content Include="static\logo.png" />
     <Content Include="templates\addExternalLogin.html" />
+    <Content Include="templates\addAdminLogin.html" />
     <Content Include="templates\addMusicianLogin.html" />
     <Content Include="templates\addSinger.html" />
     <Content Include="templates\externalLoginSearchResults.html" />
