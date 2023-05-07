@@ -36,6 +36,14 @@ app = Flask(__name__)
 def main():
     return render_template('landingPage.html')
 
+########## Admin Portal Code ########## 
+
+@app.route('/admin')
+# Rendering the admin HTML page
+def admin_portal():
+    return render_template('admin.html')
+
+
 @app.route('/fetchSingers')
 def get_singers():
     candidates_list = []
@@ -47,20 +55,79 @@ def get_singers():
     conn.close()
     return jsonify(candidates_list)
 
-@app.route('/admin')
-def admin_portal():
-    return render_template('admin.html')
 
+# Route to retrieve all musician logins
 @app.route('/get_musician_logins')
 def get_musician_logins():
+    # Initialize an empty list to store musician login records
     musician_logins_list = []
+    # Establish a connection to the database
     conn = connection()
     cursor = conn.cursor()
+    # Execute a query to fetch all records from the MusicianLogin table
     cursor.execute("SELECT * FROM dbo.MusicianLogin")
+    # Iterate through the fetched records and append them to the musician_logins_list
     for row in cursor.fetchall():
         musician_logins_list.append({"Id": row[0], "username": row[1], "password": row[2]})
+    # Close the database connection
     conn.close()
+    # Return the list of musician logins as a JSON object
     return jsonify(musician_logins_list)
+
+# Route to add a musician login record
+@app.route("/addMusicianLogin", methods=['GET', 'POST'])
+def addMusicianLogin():
+    # Handle the GET request to display the addMusicianLogin form
+    if request.method == 'GET':
+        return render_template("addMusicianLogin.html", singer={})
+    # Handle the POST request to submit the form and add the musician login record to the database
+    if request.method == 'POST':
+        Id = request.form["Id"]
+        username = request.form["username"]
+        password = request.form["password"]
+        # Establish a connection to the database
+        conn = connection()
+        cursor = conn.cursor()
+        # Execute a query to insert the new musician login record into the MusicianLogin table
+        cursor.execute("""SET IDENTITY_INSERT dbo.MusicianLogin ON INSERT INTO dbo.MusicianLogin (Id, username, password) VALUES (?, ?, ?) SET IDENTITY_INSERT dbo.Candidates OFF""", Id, username, password)
+        # Commit the transaction
+        conn.commit()
+        # Close the database connection
+        conn.close()
+        # Redirect to the /admin page
+        return redirect('/admin')
+
+# Route to update a musician login record
+@app.route('/updateSingerLogin/<int:Id>', methods=['GET', 'POST'])
+def updateSingerLogin(Id):
+    # Initialize an empty list to store the singer login record
+    cr = []
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Handle the GET request to display the updateSingerLogin form with the existing record data
+    if request.method == 'GET':
+        # Execute a query to fetch the existing record from the MusicianLogin table
+        cursor.execute("SELECT * FROM dbo.MusicianLogin WHERE Id = ?", Id)
+        # Iterate through the fetched records and append them to the cr list
+        for row in cursor.fetchall():
+            cr.append({"Id": row[0], "username": row[1], "password": row[2]})
+        # Close the database connection
+        conn.close()
+        # Render the updateSingerLogin form with the existing record data
+        return render_template("addMusicianLogin.html", singer=cr[0])
+    # Handle the POST request to submit the form and update the musician login record in the database
+    if request.method == 'POST':
+        username = request.form["username"]
+        password = request.form["password"]
+        # Execute a query to update the existing musician login record in the MusicianLogin table
+        cursor.execute("UPDATE dbo.MusicianLogin SET username = ?, password = ? WHERE Id = ?", username, password, Id)
+        # Commit the transaction
+        conn.commit()
+        # Close the database connection
+        conn.close()
+        # Redirect to the /admin
+
 
 
 
@@ -76,42 +143,6 @@ def singerslist():
     return render_template("singerslist.html", candidates_list = candidates_list)
 
 
-@app.route("/addMusicianLogin", methods = ['GET','POST'])
-#Function to add Singer Login into database
-def addMusicianLogin():
-    if request.method == 'GET':
-        return render_template("addMusicianLogin.html", singer = {})
-    if request.method == 'POST':
-        Id = request.form["Id"]
-        username = request.form["username"]
-        password = request.form["password"]
-        conn = connection()
-        cursor = conn.cursor()
-        cursor.execute("""SET IDENTITY_INSERT dbo.MusicianLogin ON INSERT INTO dbo.MusicianLogin (Id, username, password) VALUES (?, ?, ?) SET IDENTITY_INSERT dbo.Candidates OFF""", Id, username, password)
-        conn.commit()
-        conn.close()
-        return redirect('/admin')
-
-@app.route('/updateSingerLogin/<int:Id>',methods = ['GET','POST'])
-#Function to edit singer login details
-def updateSingerLogin(Id):
-    cr = []
-    conn = connection()
-    cursor = conn.cursor()
-    if request.method == 'GET':
-        cursor.execute("SELECT * FROM dbo.MusicianLogin WHERE Id = ?", Id)
-        for row in cursor.fetchall():
-            cr.append({"Id": row[0], "username": row[1], "password": row[2]})
-        conn.close()
-        return render_template("addMusicianLogin.html", singer = cr[0])
-    if request.method == 'POST':
-        #Id = request.form["Id"]
-        username = request.form["username"]
-        password = request.form["password"]
-        cursor.execute("UPDATE dbo.MusicianLogin SET username = ?, password = ? WHERE Id = ?", username, password, Id)
-        conn.commit()
-        conn.close()
-        return redirect('/admin')
 
 @app.route("/addSinger", methods = ['GET','POST'])
 #Function to add Singer into database
@@ -139,41 +170,7 @@ def searchSinger():
     if request.method == 'GET':
         return render_template("singerSearch.html", singer = {})
 
-@app.route("/searchMusicianLogin", methods = ['GET','POST'])
-#Function to search Singer login from database
-def searchMusicianLogin():
-    if request.method == 'GET':
-        return render_template("singerLoginSearch.html", singer = {})
-   
 
-@app.route('/singerLoginSearchResults', methods = ['GET','POST'])
-def singerLoginSearchResults():
-    loginFilters = {
-        'Id': request.args.get('Id'),
-        'username': request.args.get('username'), 
-    }
-    
-    searchResults = search_logins(loginFilters)
-    return render_template('loginSearchResults.html', results=searchResults)
-
-def search_logins(filters):
-    query = "SELECT * FROM dbo.MusicianLogin"
-    conditions = []
-    if filters['Id']:
-        conditions.append("Id LIKE '%{}%'".format(filters['Id']))
-    if filters['username']:
-        conditions.append("username LIKE '%{}%'".format(filters['username']))
-    if conditions:query += " WHERE " + " AND ".join(conditions)
-    #print(query) [for debugging]
-
-    musician_logins_list = []
-    conn = connection()
-    cursor = conn.cursor()
-    cursor.execute(query)
-    for row in cursor.fetchall():
-        musician_logins_list.append({"Id": row[0], "username": row[1], "password": row[2], })
-    conn.close()
-    return musician_logins_list
 
 
 
@@ -252,14 +249,7 @@ def deleteSinger(Id):
     return redirect('/admin')
 
 
-@app.route('/deleteSingerLogin/<int:Id>')
-def deleteSingerLogin(Id):
-    conn = connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM dbo.MusicianLogin WHERE Id = ?", Id)
-    conn.commit()
-    conn.close()
-    return redirect('/admin')
+
 
 if __name__ == '__main__':
     # Run the app server on localhost:4449
