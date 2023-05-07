@@ -461,6 +461,114 @@ def deleteSignUpRequest(Id):
     return redirect('/admin')
 
 
+# DROPDOWN OPTION 7 - ADMIN USERS TABLE
+# Route to fetch admin users
+@app.route('/get_admins')
+def get_admins():
+    # Create an empty list to store admin users
+    admins_list = []
+
+    # Establish database connection
+    conn = connection()
+
+    # Create a cursor object to execute SQL commands
+    cursor = conn.cursor()
+
+    # Execute SQL query to fetch all rows from dbo.Admins table
+    cursor.execute("SELECT * FROM dbo.Admins")
+
+    # Iterate through fetched rows and append them to the admins_list
+    for row in cursor.fetchall():
+        admins_list.append({
+            "Id": row[0],
+            "StaffName": row[1],
+            "StaffRole": row[2]
+        })
+
+    # Close the database connection
+    conn.close()
+
+    # Return the admins_list as a JSON object
+    return jsonify(admins_list)
+
+# Route to add an Admin login record
+@app.route("/addAdmin", methods=['GET', 'POST'])
+def addAdmin():
+    # If the request is a GET request, render the 'addAdmin.html' template
+    if request.method == 'GET':
+        return render_template("addAdmin.html", admin={})
+
+    # If the request is a POST request, add the Admin login record to the database
+    if request.method == 'POST':
+        # Get the form input values
+        StaffName = request.form["StaffName"]
+        StaffRole = request.form["StaffRole"]
+
+        # Establish database connection
+        conn = connection()
+        cursor = conn.cursor()
+
+        # Execute SQL query to insert the Admin login record into the dbo.Admins table
+        cursor.execute("""INSERT INTO dbo.Admins (StaffName, StaffRole) VALUES (?, ?)""", StaffName, StaffRole)
+
+        # Commit the changes and close the database connection
+        conn.commit()
+        conn.close()
+
+        # Redirect the user to the '/admin' route
+        return redirect('/admin')
+
+
+# Route to update an Admin login record
+@app.route('/updateAdmin/<int:Id>', methods=['GET', 'POST'])
+def updateAdmin(Id):
+    cr = []
+    conn = connection()
+    cursor = conn.cursor()
+
+    # If the request is a GET request, fetch the Admin login record and render the 'addAdmin.html' template
+    if request.method == 'GET':
+        cursor.execute("SELECT * FROM dbo.Admins WHERE Id = ?", Id)
+        for row in cursor.fetchall():
+            cr.append({"Id": row[0], "StaffName": row[1], "StaffRole": row[2]})
+        conn.close()
+        return render_template("addAdmin.html", admin=cr[0])
+
+    # If the request is a POST request, update the Admin login record in the database
+    if request.method == 'POST':
+        # Get the form input values
+        StaffName = request.form["StaffName"]
+        StaffRole = request.form["StaffRole"]
+
+        # Execute SQL query to update the Admin login record in the dbo.Admin table
+        cursor.execute("UPDATE dbo.Admins SET StaffName = ?, StaffRole = ? WHERE Id = ?", StaffName, StaffRole, Id)
+
+        # Commit the changes and close the database connection
+        conn.commit()
+        conn.close()
+
+        # Redirect the user to the '/admin' route
+        return redirect('/admin')
+
+
+# Route to delete an Admin login record
+@app.route('/deleteAdmin/<int:Id>')
+def deleteAdmin(Id):
+    # Establish database connection
+    conn = connection()
+    cursor = conn.cursor()
+
+    # Execute SQL query to delete the Admin login record from the dbo.Admins table
+    cursor.execute("DELETE FROM dbo.Admins WHERE Id = ?", Id)
+
+    # Commit the changes and close the database connection
+    conn.commit()
+    conn.close()
+
+    # Redirect the user to the '/admin' route
+    return redirect('/admin')
+
+
 # DROPDOWN OPTION 6 - EXTERNAL USERS TABLE
 # Route to fetch external users
 @app.route('/get_externals')
@@ -647,7 +755,6 @@ def deleteExternal(Id):
 
     # Redirect the user to the '/admin' route
     return redirect('/admin')
-
 
 @app.route('/singerslist')
 def singerslist():

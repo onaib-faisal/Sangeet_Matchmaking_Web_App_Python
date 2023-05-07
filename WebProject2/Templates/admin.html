@@ -310,6 +310,44 @@
         </table>
     </div>
 
+    <!-- Admin table -->
+    <div id="admin-table" class="d-none">
+        <div class="button-container" style="display: flex; justify-content: center;">
+            <div class="addAdmin-btn">
+                <a class="btn btn-custom2" href="addAdmin">Add to the table</a>
+            </div>
+            
+        </div>
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Staff's Name</th>
+                    <th scope="col">Staff's Role</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for admin in admins_list %}
+                <tr>
+                    <td>{{ admin.Id }}</td>
+                    <td>{{ admin.Singer_Name }}</td>
+                    <td>{{ admin.Gender }}</td>
+                    <td>{{ admin.Preferred_Musical_Genre }}</td>
+                    <td>{{ admin.Location_City }}</td>
+                    <td>{{ admin.Country }}</td>
+                    <td>{{ admin.Negotiable_Hourly_Rate }}</td>
+                    <td><a href='updateAdmin/{{ admin.Id }}'>Edit</a></td>
+                    <td><a href='deleteAdmin/{{ admin.Id }}'>Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
 
     <script>
 function fetchSingers() {
@@ -321,16 +359,16 @@ function fetchSingers() {
 
                     candidates_list.forEach(singer => {
                         let row = `<tr>
-                            <td>${singer.Id}</td>
-                            <td>${singer.Singer_Name}</td>
-                            <td>${singer.Gender}</td>
-                            <td>${singer.Preferred_Musical_Genre}</td>
-                            <td>${singer.Location_City}</td>
-                            <td>${singer.Country}</td>
-                            <td>${singer.Negotiable_Hourly_Rate}</td>
-                            <td><a href='updateSinger/${singer.Id}'>Edit</a></td>
-                            <td><a href='deleteSinger/${singer.Id}'>Delete</a></td>
-                        </tr>`;
+                                            <td>${singer.Id}</td>
+                                            <td>${singer.Singer_Name}</td>
+                                            <td>${singer.Gender}</td>
+                                            <td>${singer.Preferred_Musical_Genre}</td>
+                                            <td>${singer.Location_City}</td>
+                                            <td>${singer.Country}</td>
+                                            <td>${singer.Negotiable_Hourly_Rate}</td>
+                                            <td><a href='updateSinger/${singer.Id}'>Edit</a></td>
+                                            <td><a href='deleteSinger/${singer.Id}'>Delete</a></td>
+                                        </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
@@ -345,12 +383,12 @@ function fetchMusicianLogins() {
 
                     musician_logins_list.forEach(singer_login => {
                         let row = `<tr>
-                                                                    <td>${singer_login.Id}</td>
-                                                                    <td>${singer_login.username}</td>
-                                                                    <td>${singer_login.password}</td>
-                                                                    <td><a href='updateSingerLogin/${singer_login.Id}'>Edit</a></td>
-                                                                    <td><a href='deleteSingerLogin/${singer_login.Id}'>Delete</a></td>
-                                                                </tr>`;
+                                                                                    <td>${singer_login.Id}</td>
+                                                                                    <td>${singer_login.username}</td>
+                                                                                    <td>${singer_login.password}</td>
+                                                                                    <td><a href='updateSingerLogin/${singer_login.Id}'>Edit</a></td>
+                                                                                    <td><a href='deleteSingerLogin/${singer_login.Id}'>Delete</a></td>
+                                                                                </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
@@ -365,12 +403,12 @@ function fetchExternalLogins() {
 
                     external_logins_list.forEach(external_login => {
                         let row = `<tr>
-                                                                    <td>${external_login.Id}</td>
-                                                                    <td>${external_login.username}</td>
-                                                                    <td>${external_login.password}</td>
-                                                                    <td><a href='updateExternalLogin/${external_login.Id}'>Edit</a></td>
-                                                                    <td><a href='deleteExternalLogin/${external_login.Id}'>Delete</a></td>
-                                                                </tr>`;
+                                                                                    <td>${external_login.Id}</td>
+                                                                                    <td>${external_login.username}</td>
+                                                                                    <td>${external_login.password}</td>
+                                                                                    <td><a href='updateExternalLogin/${external_login.Id}'>Edit</a></td>
+                                                                                    <td><a href='deleteExternalLogin/${external_login.Id}'>Delete</a></td>
+                                                                                </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
@@ -385,12 +423,12 @@ function fetchAdminLogins() {
 
                     admin_logins_list.forEach(admin_login => {
                         let row = `<tr>
-                                        <td>${admin_login.Id}</td>
-                                        <td>${admin_login.username}</td>
-                                        <td>${admin_login.password}</td>
-                                        <td><a href='updateAdminLogin/${admin_login.Id}'>Edit</a></td>
-                                        <td><a href='deleteAdminLogin/${admin_login.Id}'>Delete</a></td>
-                                    </tr>`;
+                                                        <td>${admin_login.Id}</td>
+                                                        <td>${admin_login.username}</td>
+                                                        <td>${admin_login.password}</td>
+                                                        <td><a href='updateAdminLogin/${admin_login.Id}'>Edit</a></td>
+                                                        <td><a href='deleteAdminLogin/${admin_login.Id}'>Delete</a></td>
+                                                    </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
@@ -405,38 +443,60 @@ function fetchSignUpRequests() {
 
                     requests_list.forEach(request => {
                         let row = `<tr>
-                                <td>${request.Id}</td>
-                                <td>${request.additional_info}</td>
-                                <td><a href='deleteSignUpRequest/${request.Id}'>Delete</a></td>
-                            </tr>`;
+                                                <td>${request.Id}</td>
+                                                <td>${request.additional_info}</td>
+                                                <td><a href='deleteSignUpRequest/${request.Id}'>Delete</a></td>
+                                            </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
 }
 
 function fetchExternals() {
-        fetch('/get_externals')
-            .then(response => response.json())
-            .then(externals_list => {
-                let tableBody = document.querySelector('#external-table tbody');
-                tableBody.innerHTML = '';
+            fetch('/get_externals')
+                .then(response => response.json())
+                .then(externals_list => {
+                    let tableBody = document.querySelector('#external-table tbody');
+                    tableBody.innerHTML = '';
 
-                externals_list.forEach(external => {
-                    let row = `<tr>
-                        <td>${external.Id}</td>
-                        <td>${external.PersonName}</td>
-                        <td>${external.OrgName}</td>
-                        <td>${external.OrgPostcode}</td>
-                        <td>${external.OrgCity}</td>
-                        <td>${external.OrgCountry}</td>
-                        <td>${external.OrgSocial}</td>
-                        <td><a href='updateExternal/${external.Id}'>Edit</a></td>
-                        <td><a href='deleteExternal/${external.Id}'>Delete</a></td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
+                    externals_list.forEach(external => {
+                        let row = `<tr>
+                                        <td>${external.Id}</td>
+                                        <td>${external.PersonName}</td>
+                                        <td>${external.OrgName}</td>
+                                        <td>${external.OrgPostcode}</td>
+                                        <td>${external.OrgCity}</td>
+                                        <td>${external.OrgCountry}</td>
+                                        <td>${external.OrgSocial}</td>
+                                        <td><a href='updateExternal/${external.Id}'>Edit</a></td>
+                                        <td><a href='deleteExternal/${external.Id}'>Delete</a></td>
+                                    </tr>`;
+                        tableBody.innerHTML += row;
+                    });
                 });
-            });
 }
+
+function fetchAdmins() {
+            fetch('/get_admins')
+                .then(response => response.json())
+                .then(admins_list => {
+                    let tableBody = document.querySelector('#admin-table tbody');
+                    tableBody.innerHTML = '';
+
+                    admins_list.forEach(admin => {
+                        let row = `<tr>
+                            <td>${admin.Id}</td>
+                            <td>${admin.StaffName}</td>
+                            <td>${admin.StaffRole}</td>
+                            <td><a href='updateAdmin/${admin.Id}'>Edit</a></td>
+                            <td><a href='deleteAdmin/${admin.Id}'>Delete</a></td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                });
+}
+
+
 
 document.querySelector('.form-select').addEventListener('change', function (e) {
     if (e.target.value === '1') {
@@ -446,6 +506,7 @@ document.querySelector('.form-select').addEventListener('change', function (e) {
         document.getElementById('admin-login-table').classList.add('d-none');
         document.getElementById('sign-up-requests-table').classList.add('d-none');
         document.getElementById('external-table').classList.add('d-none');
+        document.getElementById('admin-table').classList.add('d-none');
         fetchSingers();
     } else if (e.target.value === '2') {
         document.getElementById('singer-table').classList.add('d-none');
@@ -454,6 +515,7 @@ document.querySelector('.form-select').addEventListener('change', function (e) {
         document.getElementById('admin-login-table').classList.add('d-none');
         document.getElementById('sign-up-requests-table').classList.add('d-none');
         document.getElementById('external-table').classList.add('d-none');
+        document.getElementById('admin-table').classList.add('d-none');
         fetchMusicianLogins();
     } else if (e.target.value === '3') {
         document.getElementById('singer-table').classList.add('d-none');
@@ -462,6 +524,7 @@ document.querySelector('.form-select').addEventListener('change', function (e) {
         document.getElementById('admin-login-table').classList.add('d-none');
         document.getElementById('sign-up-requests-table').classList.add('d-none');
         document.getElementById('external-table').classList.add('d-none');
+        document.getElementById('admin-table').classList.add('d-none');
         fetchExternalLogins();
     } else if (e.target.value === '4') {
         document.getElementById('singer-table').classList.add('d-none');
@@ -470,6 +533,7 @@ document.querySelector('.form-select').addEventListener('change', function (e) {
         document.getElementById('admin-login-table').classList.remove('d-none');
         document.getElementById('sign-up-requests-table').classList.add('d-none');
         document.getElementById('external-table').classList.add('d-none');
+        document.getElementById('admin-table').classList.add('d-none');
         fetchAdminLogins();
     } else if (e.target.value === '5') {
         document.getElementById('singer-table').classList.add('d-none');
@@ -478,6 +542,7 @@ document.querySelector('.form-select').addEventListener('change', function (e) {
         document.getElementById('admin-login-table').classList.add('d-none');
         document.getElementById('sign-up-requests-table').classList.remove('d-none');
         document.getElementById('external-table').classList.add('d-none');
+        document.getElementById('admin-table').classList.add('d-none');
         fetchSignUpRequests();
     } else if (e.target.value === '6') {
         document.getElementById('singer-table').classList.add('d-none');
@@ -486,9 +551,30 @@ document.querySelector('.form-select').addEventListener('change', function (e) {
         document.getElementById('admin-login-table').classList.add('d-none');
         document.getElementById('sign-up-requests-table').classList.add('d-none');
         document.getElementById('external-table').classList.remove('d-none');
+        document.getElementById('admin-table').classList.add('d-none');
         fetchExternals();
+    } else if (e.target.value === '7') {
+        document.getElementById('singer-table').classList.add('d-none');
+        document.getElementById('musician-login-table').classList.add('d-none');
+        document.getElementById('external-login-table').classList.add('d-none');
+        document.getElementById('admin-login-table').classList.add('d-none');
+        document.getElementById('sign-up-requests-table').classList.add('d-none');
+        document.getElementById('external-table').classList.add('d-none');
+        document.getElementById('admin-table').classList.remove('d-none');
+        fetchAdmins();
+    } else {
+        document.getElementById('singer-table').classList.add('d-none');
+        document.getElementById('musician-login-table').classList.add('d-none');
+        document.getElementById('external-login-table').classList.add('d-none');
+        document.getElementById('admin-login-table').classList.add('d-none');
+        document.getElementById('sign-up-requests-table').classList.add('d-none');
+        document.getElementById('external-table').classList.add('d-none');
+        document.getElementById('admin-table').classList.add('d-none');
     }
 });
+    </script>
+
+
 
 
     </script>

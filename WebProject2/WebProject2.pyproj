@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="static\logo.png" />
+    <Content Include="templates\addAdmin.html" />
     <Content Include="templates\addExternal.html" />
     <Content Include="templates\addExternalLogin.html" />
     <Content Include="templates\addAdminLogin.html" />
