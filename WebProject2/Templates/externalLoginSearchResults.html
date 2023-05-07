@@ -66,15 +66,15 @@
     <div class="header">
         <h1>Sangeet Pakistan</h1>
         <img src="static/logo.png" width="120" height="100" alt="Sangeet Pakistan Logo">
-        <h2>Singer Database</h2>
+        <h2>External Database</h2>
     </div>
 
     <div class="button-container" style="display: flex; justify-content: center;">
-        <div class="addMusicianLogin-btn">
-            <a class="btn btn-custom2" href="addMusicianLogin">Add to the Database</a>
+        <div class="addExternalLogin-btn">
+            <a class="btn btn-custom2" href="addExternalLogin">Add to the Database</a>
         </div>
-        <div class="searchMusicianLogin-btn">
-            <a class="btn btn-custom2" href="searchMusicianLogin">Search the Database</a>
+        <div class="searchExternalLogin-btn">
+            <a class="btn btn-custom2" href="searchExternalLogin">Search the Database</a>
         </div>
     </div>
 
@@ -89,12 +89,12 @@
             </tr>
         </thead>
         <tbody>
-            {% for singer in results %}
-        <td>{{ singer.Id }}</td>
-        <td>{{ singer.username }}</td>
-        <td>{{ singer.password }}</td>
-        <td><a href='updateSinger/{{ singer.Id }}'>Edit</a></td>
-        <td><a href='deleteSinger/{{ singer.Id }}'>Delete</a></td>
+            {% for external in results %}
+        <td>{{ external.Id }}</td>
+        <td>{{ external.username }}</td>
+        <td>{{ external.password }}</td>
+        <td><a href='updateSinger/{{ external.Id }}'>Edit</a></td>
+        <td><a href='deleteSinger/{{ external.Id }}'>Delete</a></td>
         </tr>
         {% endfor %}
         </tbody>

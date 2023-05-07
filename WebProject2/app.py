@@ -44,6 +44,7 @@ def admin_portal():
     return render_template('admin.html')
 
 
+# Dropdown option one - Musician Table
 @app.route('/fetchSingers')
 def get_singers():
     candidates_list = []
@@ -56,6 +57,7 @@ def get_singers():
     return jsonify(candidates_list)
 
 
+# Dropdown option 2 - Musician Login Details Table
 # Route to retrieve all musician logins
 @app.route('/get_musician_logins')
 def get_musician_logins():
@@ -126,8 +128,208 @@ def updateSingerLogin(Id):
         conn.commit()
         # Close the database connection
         conn.close()
-        # Redirect to the /admin
+        # Redirect to the /admin page
+        return redirect('/admin')
 
+# Route to search for musician login records
+@app.route("/searchMusicianLogin", methods=['GET', 'POST'])
+def searchMusicianLogin():
+    # Handle the GET request to display the searchMusicianLogin form
+    if request.method == 'GET':
+        return render_template("singerLoginSearch.html", singer={})
+
+# Route to display the search results for musician login records
+@app.route('/singerLoginSearchResults', methods=['GET', 'POST'])
+def singerLoginSearchResults():
+    # Get the search filters from the request arguments
+    loginFilters = {
+        'Id': request.args.get('Id'),
+        'username': request.args.get('username'),
+    }
+    # Call the search_logins function with the provided filters and store the results
+    searchResults = search_logins(loginFilters)
+    # Render the loginSearchResults template with the search results
+    return render_template('loginSearchResults.html', results=searchResults)
+
+# Function to search for musician login records based on the provided filters
+def search_logins(filters):
+    # Construct the base query
+    query = "SELECT * FROM dbo.MusicianLogin"
+    conditions = []
+    # Add conditions to the query based on the provided filters
+    if filters['Id']:
+        conditions.append("Id LIKE '%{}%'".format(filters['Id']))
+    if filters['username']:
+        conditions.append("username LIKE '%{}%'".format(filters['username']))
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Execute the constructed query
+    cursor.execute(query)
+    # Initialize an empty list to store the search results
+    musician_logins_list = []
+    # Iterate through the fetched records and append them to the musician_logins_list
+    for row in cursor.fetchall():
+        musician_logins_list.append({"Id": row[0], "username": row[1], "password": row[2]})
+    # Close the database connection
+    conn.close()
+    # Return the search results list
+    return musician_logins_list
+
+# Route to delete a musician login record
+@app.route('/deleteSingerLogin/<int:Id>')
+def deleteSingerLogin(Id):
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Execute a query to delete the specified musician login record from the MusicianLogin table
+    cursor.execute("DELETE FROM dbo.MusicianLogin WHERE Id = ?", Id)
+    # Commit the transaction
+    conn.commit()
+    # Close the database connection
+    conn.close()
+    # Redirect to the /admin page
+    return redirect('/admin')
+
+
+# Dropdown option 3 - External login details
+# Route to retrieve all external logins
+@app.route('/get_external_logins')
+def get_external_logins():
+    # Initialize an empty list to store musician login records
+    external_logins_list = []
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Execute a query to fetch all records from the ExternalLogin table
+    cursor.execute("SELECT * FROM dbo.ExternalLogin")
+    # Iterate through the fetched records and append them to the external_logins_list
+    for row in cursor.fetchall():
+        external_logins_list.append({"Id": row[0], "username": row[1], "password": row[2]})
+    conn.close()
+    # Return the list of musician logins as a JSON object
+    #print(external_logins_list) ##for debugging##
+    return jsonify(external_logins_list)
+
+# Route to add an external login record
+@app.route("/addExternalLogin", methods=['GET', 'POST'])
+def addExternalLogin():
+    # Handle the GET request to display the addExternalLogin form
+    if request.method == 'GET':
+        return render_template("addExternalLogin.html", external={})
+    # Handle the POST request to submit the form and add the external login record to the database
+    if request.method == 'POST':
+        Id = request.form["Id"]
+        username = request.form["username"]
+        password = request.form["password"]
+        # Establish a connection to the database
+        conn = connection()
+        cursor = conn.cursor()
+        # Execute a query to insert the new external login record into the ExternalLogin table
+        cursor.execute("""SET IDENTITY_INSERT dbo.ExternalLogin ON INSERT INTO dbo.ExternalLogin (Id, username, password) VALUES (?, ?, ?) SET IDENTITY_INSERT dbo.ExternalLogin OFF""", Id, username, password)
+        # Commit the transaction
+        conn.commit()
+        # Close the database connection
+        conn.close()
+        # Redirect to the /admin page
+        return redirect('/admin')
+
+# Route to update a external login record
+@app.route('/updateExternalLogin/<int:Id>', methods=['GET', 'POST'])
+def updateExternalLogin(Id):
+    # Initialize an empty list to store the external login record
+    cr = []
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Handle the GET request to display the updateExternalLogin form with the existing record data
+    if request.method == 'GET':
+        # Execute a query to fetch the existing record from the ExternalLogin table
+        cursor.execute("SELECT * FROM dbo.ExternalLogin WHERE Id = ?", Id)
+        # Iterate through the fetched records and append them to the cr list
+        for row in cursor.fetchall():
+            cr.append({"Id": row[0], "username": row[1], "password": row[2]})
+        # Close the database connection
+        conn.close()
+        # Render the updateExternalLogin form with the existing record data
+        return render_template("addExternalLogin.html", external=cr[0])
+    # Handle the POST request to submit the form and update the external login record in the database
+    if request.method == 'POST':
+        username = request.form["username"]
+        password = request.form["password"]
+        # Execute a query to update the existing external login record in the ExternalLogin table
+        cursor.execute("UPDATE dbo.ExternalLogin SET username = ?, password = ? WHERE Id = ?", username, password, Id)
+        # Commit the transaction
+        conn.commit()
+        # Close the database connection
+        conn.close()
+        # Redirect to the /admin page
+        return redirect('/admin')
+
+# Route to search for external login records
+@app.route("/searchExternalLogin", methods=['GET', 'POST'])
+def searchExternalLogin():
+    # Handle the GET request to display the searchExternalLogin form
+    if request.method == 'GET':
+        return render_template("externalLoginSearch.html", external={})
+
+# Route to display the search results for external login records
+@app.route('/externalLoginSearchResults', methods=['GET', 'POST'])
+def externalLoginSearchResults():
+    # Get the search filters from the request arguments
+    loginFilters = {
+        'Id': request.args.get('Id'),
+        'username': request.args.get('username'),
+    }
+    # Call the search_logins function with the provided filters and store the results
+    searchResults = external_search_logins(loginFilters)
+    # Render the externalLoginSearchResults template with the search results
+    return render_template('loginSearchResults.html', results=searchResults)
+
+# Function to search for External login records based on the provided filters
+def external_search_logins(filters):
+    # Construct the base query
+    query = "SELECT * FROM dbo.ExternalLogin"
+    conditions = []
+    # Add conditions to the query based on the provided filters
+    if filters['Id']:
+        conditions.append("Id LIKE '%{}%'".format(filters['Id']))
+    if filters['username']:
+        conditions.append("username LIKE '%{}%'".format(filters['username']))
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Execute the constructed query
+    cursor.execute(query)
+    # Initialize an empty list to store the search results
+    external_logins_list = []
+    # Iterate through the fetched records and append them to the external_logins_list
+    for row in cursor.fetchall():
+        external_logins_list.append({"Id": row[0], "username": row[1], "password": row[2]})
+    # Close the database connection
+    conn.close()
+    # Return the search results list
+    return external_logins_list
+
+# Route to delete a External login record
+@app.route('/deleteExternalLogin/<int:Id>')
+def deleteExternalLogin(Id):
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Execute a query to delete the specified External login record from the ExternalLogin table
+    cursor.execute("DELETE FROM dbo.ExternalLogin WHERE Id = ?", Id)
+    # Commit the transaction
+    conn.commit()
+    # Close the database connection
+    conn.close()
+    # Redirect to the /admin page
+    return redirect('/admin')
+ 
 
 
 
