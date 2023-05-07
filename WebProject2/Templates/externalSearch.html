@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <title>Search External Users</title>
+
+    <link rel="stylesheet" crossorigin="anonymous"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+
+    <script crossorigin="anonymous"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</head>
+
+<body>
+    <h2>Search External Users</h2>
+    <form action="/externalSearchResults" method="GET">
+        <div class="form-group row">
+            <label for="Id">External ID</label>
+            <input type="text" class="form-control" name="Id" id="Id" value="{{external.Id}}">
+        </div>
+        <div class="form-group row">
+            <label for="PersonName">User's Name</label>
+            <input type="text" class="form-control" name="PersonName" id="PersonName" value="{{external.PersonName}}">
+        </div>
+        <div class="form-group row">
+            <label for="OrgName">Organisation's Name</label>
+            <input type="text" class="form-control" name="OrgName" id="OrgName" value="{{external.OrgName}}">
+        </div>
+        <div class="form-group row">
+            <label for="OrgPostcode">Organisation's Postcode</label>
+            <input type="text" class="form-control" name="OrgPostcode" id="OrgPostcode" value="{{external.OrgPostcode}}">
+        </div>
+        <div class="form-group row">
+            <label for="OrgCity">Organisation's City</label>
+            <input type="text" class="form-control" name="OrgCity" id="OrgCity" value="{{external.OrgCity}}">
+        </div>
+        <div class="form-group row">
+            <label for="OrgCountry">Organisation's Country</label>
+            <input type="text" class="form-control" name="OrgCountry" id="OrgCountry" value="{{external.OrgCountry}}">
+        </div>
+        <div class="form-group row">
+            <label for="OrgSocial">Organisation's Social</label>
+            <input type="text" class="form-control" name="OrgSocial" id="OrgSocial" value="{{external.OrgSocial}}">
+        </div>
+        <br>
+        <input type="submit" value="Search">
+    </form>
+</body>
+</html>

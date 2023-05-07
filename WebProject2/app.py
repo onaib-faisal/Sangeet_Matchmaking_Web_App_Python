@@ -461,6 +461,194 @@ def deleteSignUpRequest(Id):
     return redirect('/admin')
 
 
+# DROPDOWN OPTION 6 - EXTERNAL USERS TABLE
+# Route to fetch external users
+@app.route('/get_externals')
+def get_externals():
+    # Create an empty list to store external users
+    externals_list = []
+
+    # Establish database connection
+    conn = connection()
+
+    # Create a cursor object to execute SQL commands
+    cursor = conn.cursor()
+
+    # Execute SQL query to fetch all rows from dbo.ExternalUsers table
+    cursor.execute("SELECT * FROM dbo.Externals")
+
+    # Iterate through fetched rows and append them to the externals_list
+    for row in cursor.fetchall():
+        externals_list.append({
+            "Id": row[0],
+            "PersonName": row[1],
+            "OrgName": row[2],
+            "OrgPostcode": row[3],
+            "OrgCity": row[4],
+            "OrgCountry": row[5],
+            "OrgSocial": row[6]
+        })
+
+    # Close the database connection
+    conn.close()
+
+    # Return the externals_list as a JSON object
+    return jsonify(externals_list)
+
+# Route to add an external login record
+@app.route("/addExternal", methods=['GET', 'POST'])
+def addExternal():
+    # If the request is a GET request, render the 'addExternal.html' template
+    if request.method == 'GET':
+        return render_template("addExternal.html", external={})
+
+    # If the request is a POST request, add the external login record to the database
+    if request.method == 'POST':
+        # Get the form input values
+        PersonName = request.form["PersonName"]
+        OrgName = request.form["OrgName"]
+        OrgPostcode = request.form["OrgPostcode"]
+        OrgCity = request.form["OrgCity"]
+        OrgCountry = request.form["OrgCountry"]
+        OrgSocial = request.form["OrgSocial"]
+
+        # Establish database connection
+        conn = connection()
+        cursor = conn.cursor()
+
+        # Execute SQL query to insert the external login record into the dbo.Externals table
+        cursor.execute("""INSERT INTO dbo.Externals (PersonName, OrgName, OrgPostcode, OrgCity, OrgCountry, OrgSocial) VALUES (?, ?, ?, ?, ?, ?)""", PersonName, OrgName, OrgPostcode, OrgCity, OrgCountry, OrgSocial)
+
+        # Commit the changes and close the database connection
+        conn.commit()
+        conn.close()
+
+        # Redirect the user to the '/admin' route
+        return redirect('/admin')
+
+
+# Route to update an external login record
+@app.route('/updateExternal/<int:Id>', methods=['GET', 'POST'])
+def updateExternal(Id):
+    cr = []
+    conn = connection()
+    cursor = conn.cursor()
+
+    # If the request is a GET request, fetch the external login record and render the 'addExternal.html' template
+    if request.method == 'GET':
+        cursor.execute("SELECT * FROM dbo.Externals WHERE Id = ?", Id)
+        for row in cursor.fetchall():
+            cr.append({"Id": row[0], "PersonName": row[1], "OrgName": row[2], "OrgPostcode": row[3], "OrgCity": row[4], "OrgCountry": row[5], "OrgSocial": row[6]})
+        conn.close()
+        return render_template("addExternal.html", external=cr[0])
+
+    # If the request is a POST request, update the external login record in the database
+    if request.method == 'POST':
+        # Get the form input values
+        PersonName = request.form["PersonName"]
+        OrgName = request.form["OrgName"]
+        OrgPostcode = request.form["OrgPostcode"]
+        OrgCity = request.form["OrgCity"]
+        OrgCountry = request.form["OrgCountry"]
+        OrgSocial = request.form["OrgSocial"]
+
+        # Execute SQL query to update the external login record in the dbo.Externals table
+        cursor.execute("UPDATE dbo.Externals SET PersonName = ?, OrgName = ?, OrgPostcode = ?, OrgCity = ?, OrgCountry = ?, OrgSocial = ? WHERE Id = ?", PersonName, OrgName, OrgPostcode, OrgCity, OrgCountry, OrgSocial, Id)
+
+        # Commit the changes and close the database connection
+        conn.commit()
+        conn.close()
+
+        # Redirect the user to the '/admin' route
+        return redirect('/admin')
+
+
+# Route to search for external login records
+@app.route("/searchExternal", methods=['GET', 'POST'])
+def searchExternal():
+    # If the request is a GET request, render the 'externalSearch.html' template
+        if request.method == 'GET':
+            return render_template("externalSearch.html", external={})
+
+# Route to display search results for external login records
+@app.route('/externalSearchResults', methods=['GET', 'POST'])
+def externalSearchResults():
+    # Get the search filter values from the request arguments
+    searchFilters = {
+        'Id': request.args.get('Id'),
+        'PersonName': request.args.get('PersonName'),
+        'OrgName': request.args.get('OrgName'),
+        'OrgPostcode': request.args.get('OrgPostcode'),
+        'OrgCity': request.args.get('OrgCity'),
+        'OrgCountry': request.args.get('OrgCountry'),
+        'OrgSocial': request.args.get('OrgSocial'),
+    }
+
+    # Call the 'external_search' function with the search filters and store the results
+    searchResults = external_search(searchFilters)
+
+    # Render the 'externalSearchResults.html' template with the search results
+    return render_template('externalSearchResults.html', results=searchResults)
+
+# Function to search for external login records based on the provided filters
+def external_search(filters):
+    query = "SELECT * FROM dbo.Externals"
+    conditions = []
+
+    # Add conditions to the SQL query based on the provided filters
+    if filters['Id']:
+        conditions.append("Id LIKE '%{}%'".format(filters['Id']))
+    if filters['PersonName']:
+        conditions.append("PersonName LIKE '%{}%'".format(filters['PersonName']))
+    if filters['OrgName']:
+        conditions.append("OrgName LIKE '%{}%'".format(filters['OrgName']))
+    if filters['OrgPostcode']:
+        conditions.append("OrgPostcode LIKE '%{}%'".format(filters['OrgPostcode']))
+    if filters['OrgCity']:
+        conditions.append("OrgCity LIKE '%{}%'".format(filters['OrgCity']))
+    if filters['OrgCountry']:
+        conditions.append("OrgCountry LIKE '%{}%'".format(filters['OrgCountry']))
+    if filters['OrgSocial']:
+        conditions.append("OrgSocial LIKE '%{}%'".format(filters['OrgSocial']))
+
+    # If there are any conditions, add them to the query
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+
+    # Establish database connection
+    conn = connection()
+    cursor = conn.cursor()
+
+    # Execute the SQL query and fetch the results
+    cursor.execute(query)
+    external_list = []
+    for row in cursor.fetchall():
+        external_list.append({"Id": row[0], "PersonName": row[1], "OrgName": row[2], "OrgPostcode": row[3], "OrgCity": row[4], "OrgCountry": row[5], "OrgSocial": row[6]})
+
+    # Close the database connection
+    conn.close()
+
+    # Return the list of external login records
+    return external_list
+
+# Route to delete an external login record
+@app.route('/deleteExternal/<int:Id>')
+def deleteExternal(Id):
+    # Establish database connection
+    conn = connection()
+    cursor = conn.cursor()
+
+    # Execute SQL query to delete the external login record from the dbo.Externals table
+    cursor.execute("DELETE FROM dbo.Externals WHERE Id = ?", Id)
+
+    # Commit the changes and close the database connection
+    conn.commit()
+    conn.close()
+
+    # Redirect the user to the '/admin' route
+    return redirect('/admin')
+
+
 @app.route('/singerslist')
 def singerslist():
     candidates_list = []
