@@ -406,6 +406,60 @@ def updateAdminLogin(Id):
         return redirect('/admin')
 
 
+# Route to delete a Admin login record
+@app.route('/deleteAdminLogin/<int:Id>')
+def deleteAdminLogin(Id):
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Execute a query to delete the specified admin login record from the Login table
+    cursor.execute("DELETE FROM dbo.AdminLogin WHERE Id = ?", Id)
+    # Commit the transaction
+    conn.commit()
+    # Close the database connection
+    conn.close()
+    # Redirect to the /admin page
+    return redirect('/admin')
+
+# DROPDOWN OPTION 5 - SIGN UP REQUESTS
+# Route to fetch sign-up requests
+@app.route('/get_sign_up_requests')
+def get_sign_up_requests():
+    # Create an empty list to store sign-up requests
+    sign_up_requests_list = []
+
+    # Establish database connection
+    conn = connection()
+
+    # Create a cursor object to execute SQL commands
+    cursor = conn.cursor()
+
+    # Execute SQL query to fetch all rows from dbo.SignUpRequests table
+    cursor.execute("SELECT * FROM dbo.SignUpRequests")
+
+    # Iterate through fetched rows and append them to the sign_up_requests_list
+    for row in cursor.fetchall():
+        sign_up_requests_list.append({"Id": row[0], "additional_info": row[1]})
+
+    # Close the database connection
+    conn.close()
+
+    # Return the sign_up_requests_list as a JSON object
+    return jsonify(sign_up_requests_list)
+
+def deleteSignUpRequest(Id):
+    # Establish a connection to the database
+    conn = connection()
+    cursor = conn.cursor()
+    # Execute a query to delete the specified sign up requesr record from the Login table
+    cursor.execute("DELETE FROM dbo.SignUpRequests WHERE Id = ?", Id)
+    # Commit the transaction
+    conn.commit()
+    # Close the database connection
+    conn.close()
+    # Redirect to the /admin page
+    return redirect('/admin')
+
 
 @app.route('/singerslist')
 def singerslist():
