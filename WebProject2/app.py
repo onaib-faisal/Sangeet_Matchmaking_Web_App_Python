@@ -1,5 +1,6 @@
 import pyodbc
-from flask import Flask, render_template, request, redirect, send_from_directory, g, jsonify
+from flask import Flask, render_template, request, redirect, send_from_directory, g, jsonify, url_for, session
+from flask_session import Session
 
 class candidate:
     def __init__(self, Id, Singer_Name, Preferred_Musical_Genre, Gender, Location_City, Country, Negotiable_Hourly_Rate):
@@ -27,6 +28,10 @@ def connection():
 # The first argument is the name of the application module or package,
 # typically __name__ when using a single module.
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'e4d13d0ea7a8c48c7678e7d0c07c29ef49cc116108fc4e3e' 
+app.config['SESSION_TYPE'] = 'filesystem'
+
+Session(app)
 
 # Flask route decorators map / and /hello to the hello function.
 # To add other resources, create functions that generate the page contents
@@ -41,7 +46,45 @@ def main():
 @app.route('/admin')
 # Rendering the admin HTML page
 def admin_portal():
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('adminlogin'))
+
     return render_template('admin.html')
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+
+    conn = connection()
+    cursor = conn.cursor()
+    query = "SELECT * FROM dbo.AdminLogin WHERE username = ?"
+    cursor.execute(query, (username,))
+
+    admin = cursor.fetchone()
+    conn.close()
+    print(admin)
+
+    if admin and admin[2] == password:
+        session['logged_in'] = True
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False}), 401
+
+
+@app.route('/adminlogin')
+def adminlogin():
+    return render_template('adminLoginScreen.html')
+
+@app.route('/adminLogout')
+def adminlogout():
+    session.clear()
+    return redirect(url_for('adminlogin'))
+
+
+
+
 
 
 # Dropdown option one - Musician Table
