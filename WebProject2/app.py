@@ -875,6 +875,81 @@ def deleteSinger(Id):
 
 
 
+############# Musician Portal Code ##############
+
+@app.route('/musicians')
+def musicians():
+    return render_template("musicians.html")
+
+
+@app.route('/get_musician_by_username', methods=['POST'])
+def get_musician_by_username():
+    username = request.form.get("username")
+    conn = connection()
+    cursor = conn.cursor()
+
+    # Fetch musician from dbo.MusicanLogin by username
+    cursor.execute("SELECT * FROM dbo.MusicianLogin WHERE username = ?", (username,))
+    musician_login = cursor.fetchone()
+
+    if musician_login:
+        musician_id = musician_login[0]
+
+        # Fetch the matching candidate from dbo.Candidates
+        cursor.execute("SELECT * FROM dbo.Candidates WHERE Id = ?", (musician_id,))
+        candidate = cursor.fetchone()
+
+        if candidate:
+            candidate_dict = {
+            "Id": candidate[0],
+            "Singer_Name": candidate[1],
+            "Preferred_Musical_Genre": candidate[2],
+            "Gender": candidate[3],
+            "Location_City": candidate[4],
+            "Country": candidate[5],
+            "Negotiable_Hourly_Rate": candidate[6]
+            }
+
+
+            conn.close()
+            return jsonify(candidate_dict)
+
+    conn.close()
+    return jsonify({}), 404
+
+@app.route('/updateCandidate/<int:Id>',methods = ['GET','POST'])
+#Function to edit singer details
+def updateSinger(Id):
+    cr = []
+    conn = connection()
+    cursor = conn.cursor()
+    if request.method == 'GET':
+        cursor.execute("SELECT * FROM dbo.Candidates WHERE Id = ?", Id)
+        for row in cursor.fetchall():
+            cr.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+        conn.close()
+        return render_template("addSinger.html", singer = cr[0])
+    if request.method == 'POST':
+        Singer_Name = request.form["Singer_Name"]
+        Gender = request.form["Gender"]
+        Preferred_Musical_Genre = request.form["Preferred_Musical_Genre"]
+        Location_City = request.form["Location_City"]
+        Country = request.form["Country"]
+        Negotiable_Hourly_Rate = float(request.form["Negotiable_Hourly_Rate"])
+        cursor.execute("UPDATE dbo.Candidates SET Singer_Name = ?, Gender = ?, Preferred_Musical_Genre = ?, Location_City = ?, Country = ?, Negotiable_Hourly_Rate = ? WHERE Id = ?", Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate, Id)
+        conn.commit()
+        conn.close()
+        return redirect('/musicians')
+
+    @app.route('/deleteCandidate/<int:Id>')
+    def deleteSinger(Id):
+        conn = connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM dbo.Candidates WHERE Id = ?", Id)
+        conn.commit()
+        conn.close()
+        return redirect('/musicians')
+
 
 if __name__ == '__main__':
     # Run the app server on localhost:4449
