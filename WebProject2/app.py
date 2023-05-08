@@ -91,7 +91,7 @@ def addMusicianLogin():
         conn = connection()
         cursor = conn.cursor()
         # Execute a query to insert the new musician login record into the MusicianLogin table
-        cursor.execute("""SET IDENTITY_INSERT dbo.MusicianLogin ON INSERT INTO dbo.MusicianLogin (Id, username, password) VALUES (?, ?, ?) SET IDENTITY_INSERT dbo.Candidates OFF""", Id, username, password)
+        cursor.execute("""SET IDENTITY_INSERT dbo.MusicianLogin ON INSERT INTO dbo.MusicianLogin (Id, username, password) VALUES (?, ?, ?) SET IDENTITY_INSERT dbo.MusicianLogin OFF""", Id, username, password)
         # Commit the transaction
         conn.commit()
         # Close the database connection
@@ -228,7 +228,7 @@ def addExternalLogin():
         conn = connection()
         cursor = conn.cursor()
         # Execute a query to insert the new external login record into the ExternalLogin table
-        cursor.execute("""SET IDENTITY_INSERT dbo.ExternalLogin ON INSERT INTO dbo.ExternalLogin (Id, username, password) VALUES (?, ?, ?) SET IDENTITY_INSERT dbo.ExternalLogin OFF""", Id, username, password)
+        cursor.execute("""INSERT INTO dbo.ExternalLogin (Id, username, password) VALUES (?, ?, ?)""", Id, username, password)
         # Commit the transaction
         conn.commit()
         # Close the database connection
