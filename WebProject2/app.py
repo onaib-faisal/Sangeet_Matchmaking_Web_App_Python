@@ -1,4 +1,7 @@
 import pyodbc
+import smtplib
+from email.message import EmailMessage
+from hashlib import sha256
 from flask import Flask, render_template, request, redirect, send_from_directory, g, jsonify, url_for, session
 from flask_session import Session
 
@@ -922,7 +925,121 @@ def deleteSinger(Id):
 
 @app.route('/musicians')
 def musicians():
-    return render_template("musicians.html")
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('musician_login'))
+    return render_template("musicians.html", username=session['username'])
+
+
+#@app.route('/musician/create_account', methods = ['GET', 'POST'])
+#def create_account():
+#    if request.method == 'GET':
+#        return render_template('createMusicianAccount.html')
+#    if request.method == 'POST':
+#        username = request.json["username"]
+#        password = request.json["password"]
+#        hashed_password = sha256(password.encode('utf-8')).hexdigest()
+#        confirm_password = request.json["confirm_password"]
+#        Singer_Name = request.json["Singer_Name"]
+#        dob = request.json["dob"]
+#        Gender = request.json["Gender"]
+#        Preferred_Musical_Genre = request.json["Preferred_Musical_Genre"]
+#        Location_City = request.json["Location_City"]
+#        Country = request.json["Country"]
+#        Negotiable_Hourly_Rate = float(request.json["Negotiable_Hourly_Rate"])
+#        Social_Media = request.json["Social_Media"]
+#        Email = request.json["Email"]
+
+
+#        additional_info = {
+#            "username": username,
+#            "password (hash)": hashed_password,
+#            "dob": dob,
+#            "Singer_Name": Singer_Name,
+#            "Gender": Gender,
+#            "Preferred_Musical_Genre": Preferred_Musical_Genre,
+#            "Location_City": Location_City,
+#            "Country": Country,
+#            "Negotiable_Hourly_Rate": Negotiable_Hourly_Rate,
+#            "Social_Media": Social_Media,
+#            "Email": Email
+#        }
+
+#        conn = connection()
+#        cursor = conn.cursor()
+#        cursor.execute("""INSERT INTO dbo.SignUpRequests (additional_info) VALUES (?)""", str(additional_info))
+#        conn.commit()
+#        conn.close()
+
+#        return jsonify({"message": "Request submitted. Please check your email for a reply in 7-14 days."})
+#    return jsonify({"error": "Invalid request method."})
+
+
+@app.route('/musician/forgot_password')
+def forgot_password():
+    return render_template('forgotPassword.html')
+
+def send_email(subject, body, to):
+    EMAIL_ADDRESS = 'theroboticsacademypk@gmail.com'
+    EMAIL_PASSWORD = 'Omer2008'
+
+    msg = EmailMessage()
+    msg.set_content(body)
+    msg['Subject'] = subject
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = to
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        smtp.send_message(msg)
+
+@app.route('/api/request_password_reset', methods=['POST'])
+def request_password_reset():
+    data = request.get_json()
+    username = data['username']
+    Singer_Name = data['Singer_Name']
+    typeUser = data['typeUser']
+
+    # Email the admin with password reset request details
+    subject = 'Forgot Password Request'
+    body = f"Dear Admin,\n\nA user has requested to reset their password.\n\nUsername: {username}\nFull Name: {Singer_Name}\nUser Type: {typeUser}\n\nPlease verify the user's identity and assist them in resetting their password.\n\nBest regards,\nThe Sangeet.pk Team"
+    admin_email = 'sangeet.pk@hotmail.com'
+    send_email(subject, body, admin_email)
+
+    return jsonify({"success": True})
+
+
+
+@app.route('/api/musician_login', methods=['POST'])
+def api_musician_login():
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+    hashpassword = sha256(password.encode('utf-8')).hexdigest()
+
+    conn = connection()
+    cursor = conn.cursor()
+    query = "SELECT * FROM dbo.MusicianLogin WHERE username = ?"
+    cursor.execute(query, (username,))
+
+    musician = cursor.fetchone()
+    conn.close()
+
+    if musician and musician[2] == hashpassword:
+        session['logged_in'] = True
+        session['username'] = username
+        return jsonify({"success": True})
+    else:
+        session['logged_in'] = False
+        return jsonify({"success": False}), 401
+
+@app.route('/musician_login')
+def musician_login():
+    return render_template('musicianLoginScreen.html')
+
+@app.route('/musician_logout')
+def musician_logout():
+    session.clear()
+    return redirect(url_for('musician_login'))
 
 
 @app.route('/get_musician_by_username', methods=['POST'])

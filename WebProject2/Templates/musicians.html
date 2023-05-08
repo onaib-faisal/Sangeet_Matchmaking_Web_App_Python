@@ -70,12 +70,6 @@
     </div>
 
     <div class="musicians-portal">
-        <form id="username-form" class="d-flex justify-content-center mt-5">
-            <label for="username" class="me-3">Username:</label>
-            <input type="text" id="username" name="username" required>
-            <button type="submit" class="btn btn-custom ms-3">Submit</button>
-        </form>
-
         <table id="musician-table" class="table d-none mt-5">
             <thead>
                 <tr>
@@ -96,60 +90,75 @@
         </table>
     </div>
     <script>
-document.getElementById('username-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const formData = new FormData();
-            formData.append('username', username);
-
+        document.addEventListener('DOMContentLoaded', function () {
             fetch('/get_musician_by_username', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'username=' + encodeURIComponent(sessionStorage.getItem('username'))
             })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('No musician found with this username.');
-                    }
-                })
-                .then(candidate => {
-                    let table = document.getElementById('musician-table');
-                    let tbody = table.querySelector('tbody');
+                .then(response => response.json())
+                .then(data => {
+                    const musicianTable = document.getElementById('musician-table');
+                    musicianTable.classList.remove('d-none');
 
-                    // Clear the table body
-                    tbody.innerHTML = '';
+                    const tbody = musicianTable.querySelector('tbody');
 
-                    // Add the candidate data to the table
-                    let row = `<tr>
-                                <td>${candidate.Id}</td>
-                                <td>${candidate.Singer_Name}</td>
-                                <td>${candidate.Gender}</td>
-                                <td>${candidate.Preferred_Musical_Genre}</td>
-                                <td>${candidate.Location_City}</td>
-                                <td>${candidate.Country}</td>
-                                <td>${candidate.Negotiable_Hourly_Rate}</td>
-                                <td><a href='updateCandidate/${candidate.Id}'>Edit</a></td>
-                                <td><a href='deleteCandidate/${candidate.Id}'>Delete</a></td>
-                            </tr>`;
+                    const musician = data;
+                    const tr = document.createElement('tr');
 
-                    tbody.innerHTML += row;
+                    const idTd = document.createElement('td');
+                    idTd.textContent = musician.Id;
+                    tr.appendChild(idTd);
 
-                    // Display the table
-                    table.classList.remove('d-none');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(error.message);
+                    const nameTd = document.createElement('td');
+                    nameTd.textContent = musician.Singer_Name;
+                    tr.appendChild(nameTd);
+
+                    const genderTd = document.createElement('td');
+                    genderTd.textContent = musician.Gender;
+                    tr.appendChild(genderTd);
+
+                    const genreTd = document.createElement('td');
+                    genreTd.textContent = musician.Preferred_Musical_Genre;
+                    tr.appendChild(genreTd);
+
+                    const locationTd = document.createElement('td');
+                    locationTd.textContent = musician.Location_City;
+                    tr.appendChild(locationTd);
+
+                    const countryTd = document.createElement('td');
+                    countryTd.textContent = musician.Country;
+                    tr.appendChild(countryTd);
+
+                    const rateTd = document.createElement('td');
+                    rateTd.textContent = musician.Negotiable_Hourly_Rate;
+                    tr.appendChild(rateTd);
+
+                    const editTd = document.createElement('td');
+                    editTd.innerHTML = `<a href='updateCandidate/${data.Id}'>Edit</a>`;
+                    tr.appendChild(editTd);
+
+                    const deleteTd = document.createElement('td');
+                    deleteTd.innerHTML = `<a href='deleteCandidate/${data.Id}'>Delete</a>`;
+                    tr.appendChild(deleteTd);
+
+                    tbody.appendChild(tr);
+
                 });
-});
+
+            const logoutBtn = document.createElement('button');
+            logoutBtn.textContent = 'Logout';
+            logoutBtn.classList.add('btn', 'btn-secondary', 'logout-btn');
+            document.body.appendChild(logoutBtn);
+
+            logoutBtn.addEventListener('click', () => {
+                sessionStorage.removeItem('username');
+                location.href = '/musician_logout';
+            });
+        });
+
     </script>
-
-    <!-- Logout button -->
-    <div class="logout-btn">
-        <a class="btn btn-custom" href="/">Logout</a>
-    </div>
-
 </body>
 </html>
