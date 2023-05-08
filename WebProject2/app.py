@@ -930,82 +930,87 @@ def musicians():
     return render_template("musicians.html", username=session['username'])
 
 
-#@app.route('/musician/create_account', methods = ['GET', 'POST'])
-#def create_account():
-#    if request.method == 'GET':
-#        return render_template('createMusicianAccount.html')
-#    if request.method == 'POST':
-#        username = request.json["username"]
-#        password = request.json["password"]
-#        hashed_password = sha256(password.encode('utf-8')).hexdigest()
-#        confirm_password = request.json["confirm_password"]
-#        Singer_Name = request.json["Singer_Name"]
-#        dob = request.json["dob"]
-#        Gender = request.json["Gender"]
-#        Preferred_Musical_Genre = request.json["Preferred_Musical_Genre"]
-#        Location_City = request.json["Location_City"]
-#        Country = request.json["Country"]
-#        Negotiable_Hourly_Rate = float(request.json["Negotiable_Hourly_Rate"])
-#        Social_Media = request.json["Social_Media"]
-#        Email = request.json["Email"]
+@app.route('/musician/create_account', methods = ['GET', 'POST'])
+def create_account():
+    if request.method == 'GET':
+        return render_template('createMusicianAccount.html')
+    if request.method == 'POST':
+        username = request.json["username"]
+        password = request.json["password"]
+        hashed_password = sha256(password.encode('utf-8')).hexdigest()
+        confirm_password = request.json["confirm_password"]
+        Singer_Name = request.json["Singer_Name"]
+        dob = request.json["dob"]
+        Gender = request.json["Gender"]
+        Preferred_Musical_Genre = request.json["Preferred_Musical_Genre"]
+        Location_City = request.json["Location_City"]
+        Country = request.json["Country"]
+        Negotiable_Hourly_Rate = float(request.json["Negotiable_Hourly_Rate"])
+        Social_Media = request.json["Social_Media"]
+        Email = request.json["Email"]
 
 
-#        additional_info = {
-#            "username": username,
-#            "password (hash)": hashed_password,
-#            "dob": dob,
-#            "Singer_Name": Singer_Name,
-#            "Gender": Gender,
-#            "Preferred_Musical_Genre": Preferred_Musical_Genre,
-#            "Location_City": Location_City,
-#            "Country": Country,
-#            "Negotiable_Hourly_Rate": Negotiable_Hourly_Rate,
-#            "Social_Media": Social_Media,
-#            "Email": Email
-#        }
+        additional_info = {
+            "username": username,
+            "password (hash)": hashed_password,
+            "dob": dob,
+            "Singer_Name": Singer_Name,
+            "Gender": Gender,
+            "Preferred_Musical_Genre": Preferred_Musical_Genre,
+            "Location_City": Location_City,
+            "Country": Country,
+            "Negotiable_Hourly_Rate": Negotiable_Hourly_Rate,
+            "Social_Media": Social_Media,
+            "Email": Email
+        }
 
-#        conn = connection()
-#        cursor = conn.cursor()
-#        cursor.execute("""INSERT INTO dbo.SignUpRequests (additional_info) VALUES (?)""", str(additional_info))
-#        conn.commit()
-#        conn.close()
+        conn = connection()
+        cursor = conn.cursor()
+        cursor.execute("""INSERT INTO dbo.SignUpRequests (additional_info) VALUES (?)""", str(additional_info))
+        conn.commit()
+        conn.close()
 
-#        return jsonify({"message": "Request submitted. Please check your email for a reply in 7-14 days."})
-#    return jsonify({"error": "Invalid request method."})
+        return jsonify({"message": "Request submitted. Please check your email for a reply in 7-14 days."})
+    return jsonify({"error": "Invalid request method."})
 
 
-@app.route('/musician/forgot_password')
-def forgot_password():
-    return render_template('forgotPassword.html')
 
-def send_email(subject, body, to):
-    EMAIL_ADDRESS = 'theroboticsacademypk@gmail.com'
-    EMAIL_PASSWORD = 'Omer2008'
+###### RUN WHEN EMAIL PURCHASED ############
+#@app.route('/musician/forgot_password')
+#def forgot_password():
+#    return render_template('forgotPassword.html')
 
-    msg = EmailMessage()
-    msg.set_content(body)
-    msg['Subject'] = subject
-    msg['From'] = EMAIL_ADDRESS
-    msg['To'] = to
 
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        smtp.send_message(msg)
 
-@app.route('/api/request_password_reset', methods=['POST'])
-def request_password_reset():
-    data = request.get_json()
-    username = data['username']
-    Singer_Name = data['Singer_Name']
-    typeUser = data['typeUser']
+#def send_email(subject, body, to):
+#    EMAIL_ADDRESS = #Enter email here 
+#    EMAIL_PASSWORD = #Enter password here
 
-    # Email the admin with password reset request details
-    subject = 'Forgot Password Request'
-    body = f"Dear Admin,\n\nA user has requested to reset their password.\n\nUsername: {username}\nFull Name: {Singer_Name}\nUser Type: {typeUser}\n\nPlease verify the user's identity and assist them in resetting their password.\n\nBest regards,\nThe Sangeet.pk Team"
-    admin_email = 'sangeet.pk@hotmail.com'
-    send_email(subject, body, admin_email)
+#    msg = EmailMessage()
+#    msg.set_content(body)
+#    msg['Subject'] = subject
+#    msg['From'] = EMAIL_ADDRESS
+#    msg['To'] = to
 
-    return jsonify({"success": True})
+#    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+#        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+#        smtp.send_message(msg)
+
+#@app.route('/api/request_password_reset', methods=['POST'])
+#def request_password_reset():
+#    data = request.get_json()
+#    Singer_Name = data['Singer_Name']
+#    username = data['username']
+#    typeUser = data['typeUser']
+
+#    # Email the admin with password reset request details
+#    subject = 'Forgot Password Request'
+#    body = f"Dear Admin,\n\nA user has requested to reset their password.\n\nUsername: {username}\nFull Name: {Singer_Name}\nUser Type: {typeUser}\n\nPlease verify the user's identity and assist them in resetting their password.\n\nBest regards,\nThe Sangeet.pk Team"
+#    admin_email = 'sangeet.pk@hotmail.com'
+#    print(subject, body, admin_email)
+#    send_email(subject, body, admin_email)
+
+#    return jsonify({"success": True})
 
 
 
@@ -1120,7 +1125,7 @@ def externals():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM dbo.Candidates")
     for row in cursor.fetchall():
-        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6], "Email": row[7]})
     conn.close()
     return render_template("externals.html", candidates_list = candidates_list)
 

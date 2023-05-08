@@ -64,6 +64,36 @@
         .alert {
             display: none;
         }
+
+        /* Custom CSS for the information tooltip */
+        .tooltip-custom {
+            font-size: 1.5rem;
+            color: #2980B9;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            right: -30px;
+            transform: translateY(-50%);
+        }
+
+            .tooltip-custom:hover .tooltip-text {
+                display: block;
+            }
+
+        .tooltip-text {
+            display: none;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            width: 300px;
+            text-align: center;
+            font-size: 1rem;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
     </style>
 </head>
 
@@ -113,6 +143,7 @@
         <div class="mb-3">
             <label for="Social_Media" class="form-label">Social Media</label>
             <input type="url" class="form-control" id="Social_Media" required>
+            <span class="tooltip-text">Please enter a URL to a public social media account</span>
         </div>
         <div class="mb-3">
             <label for="Email" class="form-label">Email</label>
