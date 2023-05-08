@@ -919,7 +919,7 @@ def get_musician_by_username():
 
 @app.route('/updateCandidate/<int:Id>',methods = ['GET','POST'])
 #Function to edit singer details
-def updateSinger(Id):
+def updateCandidate(Id):
     cr = []
     conn = connection()
     cursor = conn.cursor()
@@ -942,13 +942,27 @@ def updateSinger(Id):
         return redirect('/musicians')
 
     @app.route('/deleteCandidate/<int:Id>')
-    def deleteSinger(Id):
+    def deleteCandidate(Id):
         conn = connection()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM dbo.Candidates WHERE Id = ?", Id)
         conn.commit()
         conn.close()
         return redirect('/musicians')
+
+
+############### Externals Portal ###################
+
+@app.route('/externals')
+def externals():
+    candidates_list = []
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM dbo.Candidates")
+    for row in cursor.fetchall():
+        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+    conn.close()
+    return render_template("externals.html", candidates_list = candidates_list)
 
 
 if __name__ == '__main__':
