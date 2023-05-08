@@ -1,5 +1,6 @@
 import pyodbc
 import smtplib
+from datetime import datetime
 from email.message import EmailMessage
 from hashlib import sha256
 from flask import Flask, render_template, request, redirect, send_from_directory, g, jsonify, url_for, session
@@ -930,11 +931,41 @@ def musicians():
     return render_template("musicians.html", username=session['username'])
 
 
+def validate_create_account_form(data):
+    required_fields = [
+        "username", "password", "confirm_password", "Singer_Name", "dob",
+        "Gender", "Preferred_Musical_Genre", "Location_City", "Country",
+        "Negotiable_Hourly_Rate", "Social_Media", "Email"
+    ]
+
+    for field in required_fields:
+        if field not in data or not data[field].strip():
+            return False
+
+    if data["password"] != data["confirm_password"]:
+        return False
+
+    try:
+        datetime.strptime(data["dob"], "%Y-%m-%d")
+    except ValueError:
+        return False
+
+    try:
+        float(data["Negotiable_Hourly_Rate"])
+    except ValueError:
+        return False
+
+    return True
+
 @app.route('/musician/create_account', methods = ['GET', 'POST'])
 def create_account():
     if request.method == 'GET':
         return render_template('createMusicianAccount.html')
     if request.method == 'POST':
+        data = request.json
+
+        if not validate_create_account_form(data):
+            return jsonify({"error": "Invalid form data."}), 400
         username = request.json["username"]
         password = request.json["password"]
         hashed_password = sha256(password.encode('utf-8')).hexdigest()
@@ -963,6 +994,7 @@ def create_account():
             "Social_Media": Social_Media,
             "Email": Email
         }
+
 
         conn = connection()
         cursor = conn.cursor()

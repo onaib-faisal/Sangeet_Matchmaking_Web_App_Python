@@ -161,7 +161,7 @@
     </form>
 
     <script>
-        async function createAccount() {
+async function createAccount() {
             const form = document.querySelector('.login-form');
 
             const password = form.querySelector('#password').value;
@@ -202,11 +202,118 @@
             } else {
                 alert('An error occurred. Please try again.');
             }
-        }
+}
 
 
 
     </script>
+
+    <!-- Include jQuery library from the CDN -->
+    <script crossorigin="anonymous" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Validation Script -->
+    <script>
+$(document).ready(function () {
+            $('.login-form').submit(function (event) {
+                // Validate Username input
+                const username = $('#username').val();
+                if (!username.trim()) {
+                    alert('Please enter a valid Username');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Password input
+                const password = $('#password').val();
+                if (!password.trim()) {
+                    alert('Please enter a valid Password');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Confirm Password input
+                const confirmPassword = $('#confirm_password').val();
+                if (!confirmPassword.trim()) {
+                    alert('Please enter a valid Confirm Password');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Full Name input
+                const fullName = $('#Singer_Name').val();
+                if (!fullName.trim()) {
+                    alert('Please enter a valid Full Name');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Date of Birth input
+                const dob = $('#dob').val();
+                if (!dob.trim()) {
+                    alert('Please enter a valid Date of Birth');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Gender input
+                const gender = $('#Gender').val();
+                if (!gender.trim()) {
+                    alert('Please enter a valid Gender');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Preferred Musical Genre input
+                const preferredMusicalGenre = $('#Preferred_Musical_Genre').val();
+                if (!preferredMusicalGenre.trim()) {
+                    alert('Please enter a valid Preferred Musical Genre');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Location/City input
+                const locationCity = $('#Location_City').val();
+                if (!locationCity.trim()) {
+                    alert('Please enter a valid Location/City');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Country input
+                const country = $('#Country').val();
+                if (!country.trim()) {
+                    alert('Please enter a valid Country');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Negotiable Hourly Rate input
+                const hourlyRate = $('#Negotiable_Hourly_Rate').val();
+                if (!hourlyRate.trim()) {
+                    alert('Please enter a valid Negotiable Hourly Rate');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Social Media input
+                const socialMedia = $('#Social_Media').val();
+                if (!socialMedia.trim()) {
+                    alert('Please enter a valid Social Media URL');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Email input
+                const email = $('#Email').val();
+                if (!email.trim()) {
+                    alert('Please enter a valid Email');
+                    event.preventDefault();
+                    return;
+                }
+            });
+});
+    </script>
+
 
 </body>
 </html>

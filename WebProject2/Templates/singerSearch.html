@@ -42,5 +42,63 @@
         <br>
         <input type="submit" value="Search">
     </form>
+    <!-- Include jQuery library from the CDN -->
+    <script crossorigin="anonymous" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Validation Script -->
+    <script>
+        $(document).ready(function () {
+            $('form').submit(function (event) {
+                // Validate Singer Name input
+                const singerName = $('#Singer_Name').val();
+                if (!singerName.trim()) {
+                    alert('Please enter a valid Singer Name');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Gender input
+                const gender = $('#Gender').val();
+                if (!gender.trim()) {
+                    alert('Please enter a valid Gender');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Musical Genre input
+                const musicalGenre = $('#Preferred_Musical_Genre').val();
+                if (!musicalGenre.trim()) {
+                    alert('Please enter a valid Musical Genre');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Location/City input
+                const locationCity = $('#Location_City').val();
+                if (!locationCity.trim()) {
+                    alert('Please enter a valid Location/City');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Country input
+                const country = $('#Country').val();
+                if (!country.trim()) {
+                    alert('Please enter a valid Country');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Negotiable Hourly Rate input
+                const hourlyRate = $('#Negotiable_Hourly_Rate').val();
+                if (!hourlyRate.trim()) {
+                    alert('Please enter a valid Negotiable Hourly Rate');
+                    event.preventDefault();
+                    return;
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>

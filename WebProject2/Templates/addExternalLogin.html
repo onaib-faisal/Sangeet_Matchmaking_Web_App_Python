@@ -40,5 +40,39 @@
         <!-- Discard button to cancel and navigate to /admin page -->
         <a href="/admin" class="btn btn-primary">Discard</a>
     </form>
+    <!-- Include jQuery library from the CDN -->
+    <script crossorigin="anonymous" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Validation Script -->
+    <script>
+        $(document).ready(function () {
+            $('form').submit(function (event) {
+                // Validate External ID input
+                const externalId = $('#Id').val();
+                if (!externalId.trim()) {
+                    alert('Please enter a valid External ID');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Username input
+                const username = $('#username').val();
+                if (!username.trim()) {
+                    alert('Please enter a valid Username');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Password (hash) input
+                const password = $('#password').val();
+                if (!password.trim()) {
+                    alert('Please enter a valid Password (hash)');
+                    event.preventDefault();
+                    return;
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>

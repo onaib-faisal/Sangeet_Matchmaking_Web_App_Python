@@ -109,6 +109,31 @@
             }
         }
     </script>
-    
+    <!-- Include jQuery library from the CDN -->
+    <script crossorigin="anonymous" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Validation Script -->
+    <script>
+        $(document).ready(function () {
+            $('.login-form').submit(function (event) {
+                // Validate Username input
+                const username = $('#username').val();
+                if (!username.trim()) {
+                    alert('Please enter a valid Username');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Password input
+                const password = $('#password').val();
+                if (!password.trim()) {
+                    alert('Please enter a valid Password');
+                    event.preventDefault();
+                    return;
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>

@@ -47,5 +47,75 @@
         <button type="btnAdd" class="btn btn-primary">Join</button>
         <a href="/" class="btn btn-primary">Discard</a>
     </form>
+
+    <!-- Include jQuery library from the CDN -->
+    <script crossorigin="anonymous" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Validation Script -->
+    <script>
+        $(document).ready(function () {
+            $('form').submit(function (event) {
+                // Validate Singer's Name input
+                const singerName = $('#Singer_Name').val();
+                if (!singerName.trim()) {
+                    alert('Please enter a valid Singer\'s Name');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Singer's Gender input
+                const gender = $('#Gender').val();
+                if (!gender.trim()) {
+                    alert('Please enter a valid Singer\'s Gender');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Singer's Preferred Musical Genre input
+                const preferredMusicalGenre = $('#Preferred_Musical_Genre').val();
+                if (!preferredMusicalGenre.trim()) {
+                    alert('Please enter a valid Singer\'s Preferred Musical Genre');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Singer's Location/City input
+                const locationCity = $('#Location_City').val();
+                if (!locationCity.trim()) {
+                    alert('Please enter a valid Singer\'s Location/City');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Singer's Country input
+                const country = $('#Country').val();
+                if (!country.trim()) {
+                    alert('Please enter a valid Singer\'s Country');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Singer's Negotiable Hourly Rate input
+                const hourlyRate = $('#Negotiable_Hourly_Rate').val();
+                if (!hourlyRate.trim()) {
+                    alert('Please enter a valid Singer\'s Negotiable Hourly Rate');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Singer's Email input if it's not empty
+                const email = $('#Email').val();
+                if (email.trim()) {
+                    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                    if (!emailRegex.test(email)) {
+                        alert('Please enter a valid Singer\'s Email');
+                        event.preventDefault();
+                        return;
+                    }
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>

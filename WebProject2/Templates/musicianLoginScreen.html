@@ -122,6 +122,27 @@
             }
         }
 
+        // Validation function
+        function validateLoginForm(username, password) {
+            const usernameRegex = /^[a-zA-Z0-9_]{5,20}$/; // 5-20 alphanumeric characters and underscores
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&]{8,}$/; // At least 8 characters, including uppercase, lowercase, and digits
+
+            return usernameRegex.test(username) && passwordRegex.test(password);
+        }
+
+        // Wrap original musicianLogin function with a new function that includes validation
+        const originalMusicianLogin = musicianLogin;
+        musicianLogin = async function () {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (validateLoginForm(username, password)) {
+                originalMusicianLogin();
+            } else {
+                alert('Invalid input. Username must be 5-20 characters long (alphanumeric and underscores), and the password must be at least 8 characters long, including uppercase, lowercase, and digits.');
+            }
+        };
+
     </script>
 
 </body>

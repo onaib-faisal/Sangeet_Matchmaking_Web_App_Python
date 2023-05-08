@@ -17,7 +17,7 @@
     <form action="/externalSearchResults" method="GET">
         <div class="form-group row">
             <label for="Id">External ID</label>
-            <input type="text" class="form-control" name="Id" id="Id" value="{{external.Id}}">
+            <input type="number" class="form-control" name="Id" id="Id" value="{{external.Id}}">
         </div>
         <div class="form-group row">
             <label for="PersonName">User's Name</label>
@@ -41,7 +41,7 @@
         </div>
         <div class="form-group row">
             <label for="OrgSocial">Organisation's Social</label>
-            <input type="text" class="form-control" name="OrgSocial" id="OrgSocial" value="{{external.OrgSocial}}">
+            <input type="url" class="form-control" name="OrgSocial" id="OrgSocial" value="{{external.OrgSocial}}">
         </div>
         <br>
         <input type="submit" value="Search">

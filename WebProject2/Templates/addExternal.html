@@ -56,5 +56,65 @@
         <!-- Discard button to cancel and navigate to /admin page -->
         <a href="/admin" class="btn btn-primary">Discard</a>
     </form>
+
+    <!-- Include jQuery library from the CDN -->
+    <script crossorigin="anonymous" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Validation Script -->
+    <script>
+        $(document).ready(function () {
+            $('form').submit(function (event) {
+                // Validate User's Name input
+                const personName = $('#PersonName').val();
+                if (!personName.trim()) {
+                    alert('Please enter a valid User Name');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Organisation's Name input
+                const orgName = $('#OrgName').val();
+                if (!orgName.trim()) {
+                    alert('Please enter a valid Organisation Name');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Organisation's Postcode input
+                const orgPostcode = $('#OrgPostcode').val();
+                if (!orgPostcode.trim()) {
+                    alert('Please enter a valid Organisation Postcode');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Organisation's City input
+                const orgCity = $('#OrgCity').val();
+                if (!orgCity.trim()) {
+                    alert('Please enter a valid Organisation City');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Organisation's Country input
+                const orgCountry = $('#OrgCountry').val();
+                if (!orgCountry.trim()) {
+                    alert('Please enter a valid Organisation Country');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Organisation's Social input
+                const orgSocial = $('#OrgSocial').val();
+                if (!orgSocial.trim()) {
+                    alert('Please enter a valid Organisation Social');
+                    event.preventDefault();
+                    return;
+                }
+            });
+        });
+    </script>
+
+
 </body>
 </html>
