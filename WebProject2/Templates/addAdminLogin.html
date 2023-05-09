@@ -1,3 +1,7 @@
+<!--
+This code block is an HTML file that creates a form to input Admin login details. It includes the Bootstrap CSS library and JS bundle library from the CDN. It also includes the jQuery library from the CDN and a validation script to ensure that the inputs are valid before submitting the form.
+-->
+
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 <head>
@@ -7,14 +11,12 @@
     <!-- Include the Bootstrap CSS library from the CDN -->
     <link rel="stylesheet" crossorigin="anonymous"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
-
-    
-
-
+    <!-- The crossorigin attribute allows files to be fetched from another domain that requires CORS headers. -->
     <!-- Include the Bootstrap JS bundle library from the CDN -->
     <script crossorigin="anonymous"
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
     </script>
+    <!-- The crossorigin attribute allows files to be fetched from another domain that requires CORS headers. -->
 </head>
 
 <body>
@@ -27,6 +29,7 @@
         <div class="form-group row">
             <label for="ID">Admin ID (Check from Admins' Table)</label>
             <input type="text" class="form-control" name="Id" id="Id" value="{{admin.Id}}">
+            <!-- The "for" attribute in the label tag is used to specify which form element the label is bound to. -->
         </div>
         <!-- Username input field -->
         <div class="form-group row">
@@ -42,11 +45,12 @@
         <button type="btnAdd" class="btn btn-primary">Add</button>
         <!-- Discard button to cancel and navigate to /admin page -->
         <a href="/admin" class="btn btn-primary">Discard</a>
+        <!-- The "type" attribute for the Add button should be "submit" to submit the form. -->
     </form>
 
     <!-- Include jQuery library from the CDN -->
     <script crossorigin="anonymous" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <!-- The crossorigin attribute allows files to be fetched from another domain that requires CORS headers. -->
     <!-- Validation Script -->
     <script>
         $(document).ready(function () {
@@ -77,6 +81,7 @@
             });
         });
     </script>
+
 
 </body>
 </html>

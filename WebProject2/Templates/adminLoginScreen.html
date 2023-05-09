@@ -1,17 +1,27 @@
+<!-- This is an HTML code block for a login page -->
+<!-- Set the language and direction of the HTML document -->
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 
 <head>
+    <!-- Set the title of the webpage -->
     <title>Login</title>
 
+    <!-- Link to the Bootstrap CSS stylesheet from a CDN -->
     <link rel="stylesheet" crossorigin="anonymous"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
 
+    <!-- Include Bootstrap JS library from a CDN -->
     <script crossorigin="anonymous"
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
     </script>
+
+    <!-- Link to Google Fonts API for the 'Poppins' font family -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS styles for the login form and button -->
     <style>
+        /* Set the font family and background color of the page */
         body {
             font-family: 'Poppins', sans-serif;
             display: flex;
@@ -21,6 +31,7 @@
             background-color: #f8f9fa;
         }
 
+        /* Style the login form */
         .login-form {
             width: 400px;
             padding: 2rem;
@@ -29,16 +40,19 @@
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
 
+            /* Style the header of the login form */
             .login-form h2 {
                 text-align: center;
                 font-weight: 500;
                 margin-bottom: 1.5rem;
             }
 
+        /* Style the form inputs */
         .form-control {
             font-size: 0.9rem;
         }
 
+        /* Style the login button */
         .btn-login {
             font-size: 1rem;
             font-weight: 500;
@@ -61,6 +75,7 @@
             border-radius: 50px;
         }
 
+        /* Style the error message box and hide it by default */
         .alert {
             display: none;
         }
@@ -68,32 +83,48 @@
 </head>
 
 <body>
+    <!-- Create a login form that calls the login() function on submit -->
     <form class="login-form" onsubmit="event.preventDefault(); login();">
+        <!-- Create a header for the login form -->
         <h2>Login</h2>
+
+        <!-- Create a input field for the username -->
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" required>
         </div>
+
+        <!-- Create a input field for the password -->
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" required>
         </div>
+
+        <!-- Create a button to submit the form -->
         <button type="submit" class="btn btn-login">Login</button>
+
+        <!-- Create a error message box for invalid login -->
         <div class="alert alert-danger mt-3" role="alert">
             Invalid username and/or password.
         </div>
+
+        <!-- Create a button container for the 'Go Back' button -->
         <div class="button-container" style="display: flex; justify-content: center;">
             <div class="back-btn">
+                <!-- Create a button to go back to the homepage -->
                 <a class="btn btn-login" href="/">Go Back</a>
             </div>
         </div>
     </form>
 
+    <!-- Create a script to handle the login process -->
     <script>
         async function login() {
+            // Get the username and password from the input fields
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
+            // Send a POST request to the login API with the username and password
             const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
@@ -102,21 +133,25 @@
                 body: JSON.stringify({ username, password })
             });
 
+            // If the login is successful, redirect to the admin page
             if (response.status === 200) {
                 window.location.href = '/admin';
             } else {
+                // If the login fails, display an error message
                 document.querySelector('.alert').style.display = 'block';
             }
         }
     </script>
+
     <!-- Include jQuery library from the CDN -->
     <script crossorigin="anonymous" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Validation Script -->
+    <!-- Create a script to validate the input fields -->
     <script>
         $(document).ready(function () {
+            // Listen for the submit event on the login form
             $('.login-form').submit(function (event) {
-                // Validate Username input
+                // Validate the username input field
                 const username = $('#username').val();
                 if (!username.trim()) {
                     alert('Please enter a valid Username');
@@ -124,7 +159,7 @@
                     return;
                 }
 
-                // Validate Password input
+                // Validate the password input field
                 const password = $('#password').val();
                 if (!password.trim()) {
                     alert('Please enter a valid Password');

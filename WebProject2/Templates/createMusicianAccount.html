@@ -27,7 +27,10 @@
             background-color: #fff;
             border-radius: 1rem;
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            height: 80vh; 
+            overflow-y: scroll; 
         }
+
 
             .login-form h2 {
                 text-align: center;
@@ -229,6 +232,14 @@ $(document).ready(function () {
                     alert('Please enter a valid Password');
                     event.preventDefault();
                     return;
+                } else if (password.length < 8) {
+                    alert('Password should be at least 8 characters long');
+                    event.preventDefault();
+                    return;
+                } else if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+                    alert('Password should contain at least one lowercase letter, one uppercase letter, and one digit');
+                    event.preventDefault();
+                    return;
                 }
 
                 // Validate Confirm Password input
@@ -237,12 +248,20 @@ $(document).ready(function () {
                     alert('Please enter a valid Confirm Password');
                     event.preventDefault();
                     return;
+                } else if (confirmPassword !== password) {
+                    alert('Passwords do not match');
+                    event.preventDefault();
+                    return;
                 }
 
                 // Validate Full Name input
                 const fullName = $('#Singer_Name').val();
                 if (!fullName.trim()) {
                     alert('Please enter a valid Full Name');
+                    event.preventDefault();
+                    return;
+                } else if (!/^[a-zA-Z ]+$/.test(fullName)) {
+                    alert('Full Name should only contain letters and spaces');
                     event.preventDefault();
                     return;
                 }
@@ -277,6 +296,10 @@ $(document).ready(function () {
                     alert('Please enter a valid Location/City');
                     event.preventDefault();
                     return;
+                } else if (!/^[a-zA-Z\s]+$/.test(locationCity)) {
+                    alert('City should contain only letters and spaces');
+                    event.preventDefault();
+                    return;
                 }
 
                 // Validate Country input
@@ -285,12 +308,20 @@ $(document).ready(function () {
                     alert('Please enter a valid Country');
                     event.preventDefault();
                     return;
+                } else if (!/^[a-zA-Z\s]+$/.test(country)) {
+                    alert('Country should contain only letters and spaces');
+                    event.preventDefault();
+                    return;
                 }
 
                 // Validate Negotiable Hourly Rate input
                 const hourlyRate = $('#Negotiable_Hourly_Rate').val();
                 if (!hourlyRate.trim()) {
                     alert('Please enter a valid Negotiable Hourly Rate');
+                    event.preventDefault();
+                    return;
+                } else if (hourlyRate < 0) {
+                    alert('Negotiable Hourly Rate should be a positive number');
                     event.preventDefault();
                     return;
                 }

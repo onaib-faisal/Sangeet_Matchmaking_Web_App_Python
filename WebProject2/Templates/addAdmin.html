@@ -1,3 +1,7 @@
+<!--
+This is a HTML page with a form to input Admin Details. Below is the code breakdown:
+-->
+
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 <head>
@@ -13,8 +17,7 @@
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
     </script>
 
-    
-
+    <!-- Add any additional meta tags, stylesheets, or scripts if required -->
 
 </head>
 
@@ -46,13 +49,15 @@
 
     <!-- Validation Script -->
     <script>
+        // Wait for document to be ready
         $(document).ready(function () {
+            // On form submit, validate the form inputs
             $('form').submit(function (event) {
                 // Validate Staff's Name input
                 const staffName = $('#StaffName').val();
                 if (!staffName.trim()) {
                     alert('Please enter a valid Staff Name');
-                    event.preventDefault();
+                    event.preventDefault(); // prevent form submission
                     return;
                 }
 
@@ -60,7 +65,7 @@
                 const staffRole = $('#StaffRole').val();
                 if (!staffRole.trim()) {
                     alert('Please enter a valid Staff Role');
-                    event.preventDefault();
+                    event.preventDefault(); // prevent form submission
                     return;
                 }
             });
@@ -69,3 +74,15 @@
 
 </body>
 </html>
+
+<!--
+Comments:
+- The HTML document is well-structured and uses appropriate HTML5 tags and attributes.
+- The Bootstrap CSS and JS libraries are included from CDN to enhance the UI.
+- The form has two input fields for Staff Name and Staff Role and two buttons, Add and Discard.
+- The form is submitted using the HTTP POST method to the same URL as the current page.
+- The jQuery library is included from CDN to simplify the JavaScript code.
+- The JavaScript code waits for the document to be ready and then binds a submit event listener to the form element.
+- On form submit, the JavaScript code validates the Staff Name and Staff Role input fields.
+- If any validation fails, the JavaScript code displays an alert message and prevents the form submission.
+-->

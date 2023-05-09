@@ -1,50 +1,63 @@
+<!-- This is an HTML document used to display a search form for external users. -->
+
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 <head>
+    <!-- The title of the page is "Search External Users" -->
     <title>Search External Users</title>
 
-    <link rel="stylesheet" crossorigin="anonymous"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <!-- The following link is to Bootstrap CSS library that provides styling for the page. -->
+    <link rel="stylesheet" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
 
-    <script crossorigin="anonymous"
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
-    </script>
+    <!-- The following script is to the Bootstrap JavaScript library that provides functionality for the page. -->
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 
 <body>
     <h2>Search External Users</h2>
     <form action="/externalSearchResults" method="GET">
+        <!-- The following div contains a form-group row with a label and an input element for the external user's ID. -->
         <div class="form-group row">
             <label for="Id">External ID</label>
             <input type="number" class="form-control" name="Id" id="Id" value="{{external.Id}}">
         </div>
+        <!-- The following div contains a form-group row with a label and an input element for the external user's name. -->
         <div class="form-group row">
             <label for="PersonName">User's Name</label>
             <input type="text" class="form-control" name="PersonName" id="PersonName" value="{{external.PersonName}}">
         </div>
+        <!-- The following div contains a form-group row with a label and an input element for the external user's organisation's name. -->
         <div class="form-group row">
             <label for="OrgName">Organisation's Name</label>
             <input type="text" class="form-control" name="OrgName" id="OrgName" value="{{external.OrgName}}">
         </div>
+        <!-- The following div contains a form-group row with a label and an input element for the external user's organisation's postcode. -->
         <div class="form-group row">
             <label for="OrgPostcode">Organisation's Postcode</label>
             <input type="text" class="form-control" name="OrgPostcode" id="OrgPostcode" value="{{external.OrgPostcode}}">
         </div>
+        <!-- The following div contains a form-group row with a label and an input element for the external user's organisation's city. -->
         <div class="form-group row">
             <label for="OrgCity">Organisation's City</label>
             <input type="text" class="form-control" name="OrgCity" id="OrgCity" value="{{external.OrgCity}}">
         </div>
+        <!-- The following div contains a form-group row with a label and an input element for the external user's organisation's country. -->
         <div class="form-group row">
             <label for="OrgCountry">Organisation's Country</label>
             <input type="text" class="form-control" name="OrgCountry" id="OrgCountry" value="{{external.OrgCountry}}">
         </div>
+        <!-- The following div contains a form-group row with a label and an input element for the external user's organisation's social media URL. -->
         <div class="form-group row">
             <label for="OrgSocial">Organisation's Social</label>
             <input type="url" class="form-control" name="OrgSocial" id="OrgSocial" value="{{external.OrgSocial}}">
         </div>
+        <!-- The following line creates a line break. -->
         <br>
+        <!-- The following input element is a submit button that is used to submit the form. -->
         <input type="submit" value="Search">
     </form>
 </body>
 </html>
+
+

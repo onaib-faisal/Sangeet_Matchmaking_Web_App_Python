@@ -350,7 +350,10 @@
 
 
     <script>
-function fetchSingers() {
+        /*
+        This function fetches data of singers from the server using a GET request and populates the #singer-table with the response data.
+        */
+        function fetchSingers() {
             fetch('/fetchSingers')
                 .then(response => response.json())
                 .then(candidates_list => {
@@ -359,22 +362,25 @@ function fetchSingers() {
 
                     candidates_list.forEach(singer => {
                         let row = `<tr>
-                                            <td>${singer.Id}</td>
-                                            <td>${singer.Singer_Name}</td>
-                                            <td>${singer.Gender}</td>
-                                            <td>${singer.Preferred_Musical_Genre}</td>
-                                            <td>${singer.Location_City}</td>
-                                            <td>${singer.Country}</td>
-                                            <td>${singer.Negotiable_Hourly_Rate}</td>
-                                            <td><a href='updateSinger/${singer.Id}'>Edit</a></td>
-                                            <td><a href='deleteSinger/${singer.Id}'>Delete</a></td>
-                                        </tr>`;
+                                        <td>${singer.Id}</td>
+                                        <td>${singer.Singer_Name}</td>
+                                        <td>${singer.Gender}</td>
+                                        <td>${singer.Preferred_Musical_Genre}</td>
+                                        <td>${singer.Location_City}</td>
+                                        <td>${singer.Country}</td>
+                                        <td>${singer.Negotiable_Hourly_Rate}</td>
+                                        <td><a href='updateSinger/${singer.Id}'>Edit</a></td>
+                                        <td><a href='deleteSinger/${singer.Id}'>Delete</a></td>
+                                    </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
-}
+        }
 
-function fetchMusicianLogins() {
+        /*
+        This function fetches data of musician logins from the server using a GET request and populates the #musician-login-table with the response data.
+        */
+        function fetchMusicianLogins() {
             fetch('/get_musician_logins')
                 .then(response => response.json())
                 .then(musician_logins_list => {
@@ -383,18 +389,21 @@ function fetchMusicianLogins() {
 
                     musician_logins_list.forEach(singer_login => {
                         let row = `<tr>
-                                                                                    <td>${singer_login.Id}</td>
-                                                                                    <td>${singer_login.username}</td>
-                                                                                    <td>${singer_login.password}</td>
-                                                                                    <td><a href='updateSingerLogin/${singer_login.Id}'>Edit</a></td>
-                                                                                    <td><a href='deleteSingerLogin/${singer_login.Id}'>Delete</a></td>
-                                                                                </tr>`;
+                                                                    <td>${singer_login.Id}</td>
+                                                                    <td>${singer_login.username}</td>
+                                                                    <td>${singer_login.password}</td>
+                                                                    <td><a href='updateSingerLogin/${singer_login.Id}'>Edit</a></td>
+                                                                    <td><a href='deleteSingerLogin/${singer_login.Id}'>Delete</a></td>
+                                                                </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
-}
+        }
 
-function fetchExternalLogins() {
+        /*
+        This function fetches data of external logins from the server using a GET request and populates the #external-login-table with the response data.
+        */
+        function fetchExternalLogins() {
             fetch('/get_external_logins')
                 .then(response => response.json())
                 .then(external_logins_list => {
@@ -403,18 +412,21 @@ function fetchExternalLogins() {
 
                     external_logins_list.forEach(external_login => {
                         let row = `<tr>
-                                                                                    <td>${external_login.Id}</td>
-                                                                                    <td>${external_login.username}</td>
-                                                                                    <td>${external_login.password}</td>
-                                                                                    <td><a href='updateExternalLogin/${external_login.Id}'>Edit</a></td>
-                                                                                    <td><a href='deleteExternalLogin/${external_login.Id}'>Delete</a></td>
-                                                                                </tr>`;
+                                                                    <td>${external_login.Id}</td>
+                                                                    <td>${external_login.username}</td>
+                                                                    <td>${external_login.password}</td>
+                                                                    <td><a href='updateExternalLogin/${external_login.Id}'>Edit</a></td>
+                                                                    <td><a href='deleteExternalLogin/${external_login.Id}'>Delete</a></td>
+                                                                </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
-}
+        }
 
-function fetchAdminLogins() {
+        /*
+        This function fetches data of admin logins from the server using a GET request and populates the #admin-login-table with the response data.
+        */
+        function fetchAdminLogins() {
             fetch('/get_admin_logins')
                 .then(response => response.json())
                 .then(admin_logins_list => {
@@ -423,18 +435,21 @@ function fetchAdminLogins() {
 
                     admin_logins_list.forEach(admin_login => {
                         let row = `<tr>
-                                                        <td>${admin_login.Id}</td>
-                                                        <td>${admin_login.username}</td>
-                                                        <td>${admin_login.password}</td>
-                                                        <td><a href='updateAdminLogin/${admin_login.Id}'>Edit</a></td>
-                                                        <td><a href='deleteAdminLogin/${admin_login.Id}'>Delete</a></td>
-                                                    </tr>`;
+                                                    <td>${admin_login.Id}</td>
+                                                    <td>${admin_login.username}</td>
+                                                    <td>${admin_login.password}</td>
+                                                    <td                                                    ><a href='updateAdminLogin/${admin_login.Id}'>Edit</a></td>
+                                                    <td><a href='deleteAdminLogin/${admin_login.Id}'>Delete</a></td>
+                                                </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
-}
+        }
 
-function fetchSignUpRequests() {
+        /*
+        This function fetches data of sign up requests from the server using a GET request and populates the #sign-up-requests-table with the response data.
+        */
+        function fetchSignUpRequests() {
             fetch('/get_sign_up_requests')
                 .then(response => response.json())
                 .then(requests_list => {
@@ -443,16 +458,19 @@ function fetchSignUpRequests() {
 
                     requests_list.forEach(request => {
                         let row = `<tr>
-                                                <td>${request.Id}</td>
-                                                <td>${request.additional_info}</td>
-                                                <td><a href='deleteSignUpRequest/${request.Id}'>Delete</a></td>
-                                            </tr>`;
+                                        <td>${request.Id}</td>
+                                        <td>${request.additional_info}</td>
+                                        <td><a href='deleteSignUpRequest/${request.Id}'>Delete</a></td>
+                                    </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
-}
+        }
 
-function fetchExternals() {
+        /*
+        This function fetches data of external organizations from the server using a GET request and populates the #external-table with the response data.
+        */
+        function fetchExternals() {
             fetch('/get_externals')
                 .then(response => response.json())
                 .then(externals_list => {
@@ -461,22 +479,25 @@ function fetchExternals() {
 
                     externals_list.forEach(external => {
                         let row = `<tr>
-                                        <td>${external.Id}</td>
-                                        <td>${external.PersonName}</td>
-                                        <td>${external.OrgName}</td>
-                                        <td>${external.OrgPostcode}</td>
-                                        <td>${external.OrgCity}</td>
-                                        <td>${external.OrgCountry}</td>
-                                        <td>${external.OrgSocial}</td>
-                                        <td><a href='updateExternal/${external.Id}'>Edit</a></td>
-                                        <td><a href='deleteExternal/${external.Id}'>Delete</a></td>
-                                    </tr>`;
+                                    <td>${external.Id}</td>
+                                    <td>${external.PersonName}</td>
+                                    <td>${external.OrgName}</td>
+                                    <td>${external.OrgPostcode}</td>
+                                    <td>${external.OrgCity}</td>
+                                    <td>${external.OrgCountry}</td>
+                                    <td>${external.OrgSocial}</td>
+                                    <td><a href='updateExternal/${external.Id}'>Edit</a></td>
+                                    <td><a href='deleteExternal/${external.Id}'>Delete</a></td>
+                                </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
-}
+        }
 
-function fetchAdmins() {
+        /*
+        This function fetches data of admins from the server using a GET request and populates the #admin-table with the response data.
+        */
+        function fetchAdmins() {
             fetch('/get_admins')
                 .then(response => response.json())
                 .then(admins_list => {
@@ -485,18 +506,20 @@ function fetchAdmins() {
 
                     admins_list.forEach(admin => {
                         let row = `<tr>
-                            <td>${admin.Id}</td>
-                            <td>${admin.StaffName}</td>
-                            <td>${admin.StaffRole}</td>
-                            <td><a href='updateAdmin/${admin.Id}'>Edit</a></td>
-                            <td><a href='deleteAdmin/${admin.Id}'>Delete</a></td>
-                        </tr>`;
+                        <td>${admin.Id}</td>
+                        <td>${admin.StaffName}</td>
+                        <td>${admin.StaffRole}</td>
+                        <td><a href='updateAdmin/${admin.Id}'>Edit</a></td>
+                        <td><a href='deleteAdmin/${admin.Id}'>Delete</a></td>
+                    </tr>`;
                         tableBody.innerHTML += row;
                     });
                 });
-}
+        }
 
-
+/*
+This function adds an event listener to the .form-select element that listens for a change event. When a change event is detected, it calls the appropriate fetch function to fetch and populate the appropriate table based on the value of the select option.
+*/
 
 document.querySelector('.form-select').addEventListener('change', function (e) {
     if (e.target.value === '1') {

@@ -1,13 +1,21 @@
+<!-- This is an HTML document for a musician portal. It includes a header with a logo, organization name, and page title, a table to display musicians' information, and a logout button. -->
+
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 <head>
+    <!-- The title of the page -->
     <title>Musicians Portal</title>
-    <link rel="stylesheet" crossorigin="anonymous"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
-    <script crossorigin="anonymous"
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
-    </script>
+
+    <!-- The Bootstrap CSS file is loaded from a CDN -->
+    <link rel="stylesheet" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+
+    <!-- The Bootstrap JavaScript file is loaded from a CDN -->
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- The Poppins font is loaded from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS for the page -->
     <style>
         /* Custom CSS for the header */
         .header {
@@ -17,6 +25,7 @@
             padding: 10px;
         }
 
+            /* Custom CSS for the header text */
             .header h1, h2 {
                 font-family: 'Poppins', sans-serif;
                 font-weight: 500;
@@ -62,13 +71,14 @@
     </style>
 </head>
 <body>
-    <!-- Header with logo, organization name, and page title -->
+    <!-- Header section containing organization name, logo, and page title -->
     <div class="header">
         <h1>Sangeet Pakistan</h1>
         <img src="static\logo.png" width="120" height="100" alt="Sangeet Pakistan Logo">
         <h2>Musicians Portal</h2>
     </div>
 
+    <!-- Table section to display musicians' information -->
     <div class="musicians-portal">
         <table id="musician-table" class="table d-none mt-5">
             <thead>
@@ -89,25 +99,31 @@
             </tbody>
         </table>
     </div>
+
+    <!-- JavaScript script to fetch musician data and populate the table -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Fetch musician data by username using a POST request to the server
             fetch('/get_musician_by_username', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
+                // Encode the username and send it in the request body
                 body: 'username=' + encodeURIComponent(sessionStorage.getItem('username'))
             })
                 .then(response => response.json())
                 .then(data => {
+                    // Get the musician table and remove the "d-none" class to make it visible
                     const musicianTable = document.getElementById('musician-table');
                     musicianTable.classList.remove('d-none');
 
+                    // Get the table body and create a new row for the musician data
                     const tbody = musicianTable.querySelector('tbody');
-
                     const musician = data;
                     const tr = document.createElement('tr');
 
+                    // Populate the table cells with the musician data
                     const idTd = document.createElement('td');
                     idTd.textContent = musician.Id;
                     tr.appendChild(idTd);
@@ -137,22 +153,27 @@
                     tr.appendChild(rateTd);
 
                     const editTd = document.createElement('td');
+                    // Create an edit link with the musician's ID as a parameter
                     editTd.innerHTML = `<a href='updateCandidate/${data.Id}'>Edit</a>`;
                     tr.appendChild(editTd);
 
                     const deleteTd = document.createElement('td');
+                    // Create a delete link with the musician's ID as a parameter
                     deleteTd.innerHTML = `<a href='deleteCandidate/${data.Id}'>Delete</a>`;
                     tr.appendChild(deleteTd);
 
+                    // Add the row to the table body
                     tbody.appendChild(tr);
 
                 });
 
+            // Create a logout button and append it to the body
             const logoutBtn = document.createElement('button');
             logoutBtn.textContent = 'Logout';
             logoutBtn.classList.add('btn', 'btn-secondary', 'logout-btn');
             document.body.appendChild(logoutBtn);
 
+            // Add an event listener to the logout button to clear the session storage and redirect to the logout page
             logoutBtn.addEventListener('click', () => {
                 sessionStorage.removeItem('username');
                 location.href = '/musician_logout';

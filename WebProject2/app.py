@@ -46,62 +46,74 @@ def main():
     return render_template('landingPage.html')
 
 ########## Admin Portal Code ########## 
-
 @app.route('/admin')
-# Rendering the admin HTML page
+# This function renders the admin HTML page
 def admin_portal():
+    # Check if user is logged in, otherwise redirect to admin login page
     if 'logged_in' not in session or not session['logged_in']:
         return redirect(url_for('adminlogin'))
 
     return render_template('admin.html')
 
+
 @app.route('/api/login', methods=['POST'])
+# This function handles the API request to login to the system
 def api_login():
+    # Get login data from request payload
     data = request.get_json()
     username = data['username']
     password = data['password']
 
+    # Establish a connection to the database and execute SQL query to check if user exists
     conn = connection()
     cursor = conn.cursor()
     query = "SELECT * FROM dbo.AdminLogin WHERE username = ?"
     cursor.execute(query, (username,))
 
+    # Fetch the user data from the database
     admin = cursor.fetchone()
     conn.close()
     print(admin)
 
+    # If the user exists and the password is correct, set the user as logged in and return a success message
     if admin and admin[2] == password:
         session['logged_in'] = True
         return jsonify({"success": True})
+    # Otherwise, return a failure message with a 401 status code (unauthorized)
     else:
         return jsonify({"success": False}), 401
 
 
 @app.route('/adminlogin')
+# This function renders the admin login page
 def adminlogin():
     return render_template('adminLoginScreen.html')
 
+
 @app.route('/adminLogout')
+# This function logs the user out by clearing the session and redirecting to the admin login page
 def adminlogout():
     session.clear()
     return redirect(url_for('adminlogin'))
 
 
 
-
-
-
 # Dropdown option one - Musician Table
 @app.route('/fetchSingers')
+# This function retrieves the list of singers from the database and returns it in JSON format
 def get_singers():
     candidates_list = []
+    # Establish a connection to the database and execute SQL query to get the list of singers
     conn = connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM dbo.Candidates")
+    # Iterate over the list of singers and append the data to the candidates_list
     for row in cursor.fetchall():
         candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
     conn.close()
+    # Return the candidates_list in JSON format
     return jsonify(candidates_list)
+
 
 
 # Dropdown option 2 - Musician Login Details Table
@@ -846,8 +858,10 @@ def searchSinger():
 
 
 
+# Route for searching singers based on filters
 @app.route('/searchResults', methods = ['GET','POST'])
 def searchResults():
+    # Retrieve filters from the request
     singerFilters = {
         'Singer_Name': request.args.get('Singer_Name'),
         'Gender': request.args.get('Gender'),
@@ -857,12 +871,17 @@ def searchResults():
         'Negotiable_Hourly_Rate': request.args.get('Negotiable_Hourly_Rate') 
     }
     
+    # Call the search_songs function to retrieve search results
     searchResults = search_songs(singerFilters)
+    # Render the searchResults.html template with the retrieved results
     return render_template('searchResults.html', results=searchResults)
 
+# Function to search songs based on filters
 def search_songs(filters):
+    # Construct the base query
     query = "SELECT * FROM dbo.Candidates"
     conditions = []
+    # Check if a filter was passed and add it to the conditions list
     if filters['Singer_Name']:
         conditions.append("Singer_Name LIKE '%{}%'".format(filters['Singer_Name']))
     if filters['Gender']:
@@ -875,9 +894,13 @@ def search_songs(filters):
         conditions.append("Country = '{}'".format(filters['Country']))
     if filters['Negotiable_Hourly_Rate']:
         conditions.append("Negotiable_Hourly_Rate = '{}'".format(filters['Negotiable_Hourly_Rate']))
-    if conditions:query += " WHERE " + " AND ".join(conditions)
+    # Append the conditions to the query
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+    # Debugging print statement to view the query
     print(query)
 
+    # Execute the query and retrieve the results
     candidates_list = []
     conn = connection()
     cursor = conn.cursor()
@@ -885,87 +908,103 @@ def search_songs(filters):
     for row in cursor.fetchall():
         candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
     conn.close()
+    # Return the retrieved list of candidates
     return candidates_list
 
+# Route for updating a singer's details
 @app.route('/updateSinger/<int:Id>',methods = ['GET','POST'])
-#Function to edit singer details
 def updateSinger(Id):
+    # List to hold the candidate's details
     cr = []
     conn = connection()
     cursor = conn.cursor()
+    # Retrieve the candidate's details to display the current values in the form
     if request.method == 'GET':
         cursor.execute("SELECT * FROM dbo.Candidates WHERE Id = ?", Id)
         for row in cursor.fetchall():
-            cr.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+            cr.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Neg    tiatable_Hourly_Rate": row[6]})
         conn.close()
+        # Render the addSinger.html template with the current values of the singer
         return render_template("addSinger.html", singer = cr[0])
+    # Update the singer's details
     if request.method == 'POST':
+        # Retrieve the new values for the singer's details
         Singer_Name = request.form["Singer_Name"]
         Gender = request.form["Gender"]
         Preferred_Musical_Genre = request.form["Preferred_Musical_Genre"]
         Location_City = request.form["Location_City"]
         Country = request.form["Country"]
         Negotiable_Hourly_Rate = float(request.form["Negotiable_Hourly_Rate"])
+        # Update the singer's details in the database
         cursor.execute("UPDATE dbo.Candidates SET Singer_Name = ?, Gender = ?, Preferred_Musical_Genre = ?, Location_City = ?, Country = ?, Negotiable_Hourly_Rate = ? WHERE Id = ?", Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate, Id)
         conn.commit()
         conn.close()
+        # Redirect to the admin page
         return redirect('/admin')
 
+# Route for deleting a singer
 @app.route('/deleteSinger/<int:Id>')
 def deleteSinger(Id):
     conn = connection()
     cursor = conn.cursor()
+    # Delete the singer from the database
     cursor.execute("DELETE FROM dbo.Candidates WHERE Id = ?", Id)
     conn.commit()
     conn.close()
+    # Redirect to the admin page
     return redirect('/admin')
 
-
-
-############# Musician Portal Code ##############
-
+# Route for displaying the musicians page
 @app.route('/musicians')
 def musicians():
+    # Check if the user is logged in
     if 'logged_in' not in session or not session['logged_in']:
+        # Redirect to the musician login page
         return redirect(url_for('musician_login'))
+    # Render the musicians.html template with the user's username
     return render_template("musicians.html", username=session['username'])
 
-
+# Function to validate the musician registration form
 def validate_create_account_form(data):
+    # List of required form fields
     required_fields = [
         "username", "password", "confirm_password", "Singer_Name", "dob",
         "Gender", "Preferred_Musical_Genre", "Location_City", "Country",
         "Negotiable_Hourly_Rate", "Social_Media", "Email"
     ]
-
+    # Check if all required fields are present and not empty
     for field in required_fields:
         if field not in data or not data[field].strip():
             return False
-
+    # Check if the password and confirm password fields match
     if data["password"] != data["confirm_password"]:
         return False
-
     try:
+        # Check if the date of birth is in the correct format
         datetime.strptime(data["dob"], "%Y-%m-%d")
     except ValueError:
         return False
-
     try:
+        # Check if the hourly rate can be converted to a float
         float(data["Negotiable_Hourly_Rate"])
     except ValueError:
         return False
-
+    # Form is valid
     return True
 
+# Route for creating a new musician account
 @app.route('/musician/create_account', methods = ['GET', 'POST'])
 def create_account():
+    # Display the musician registration form
     if request.method == 'GET':
         return render_template('createMusicianAccount.html')
+    # Submit the musician registration form
     if request.method == 'POST':
         data = request.json
-
+        # Validate the form data
         if not validate_create_account_form(data):
             return jsonify({"error": "Invalid form data."}), 400
+        # Retrieve the form data and hash the password
         username = request.json["username"]
         password = request.json["password"]
         hashed_password = sha256(password.encode('utf-8')).hexdigest()
@@ -980,7 +1019,7 @@ def create_account():
         Social_Media = request.json["Social_Media"]
         Email = request.json["Email"]
 
-
+        # Store the form data in a dictionary
         additional_info = {
             "username": username,
             "password (hash)": hashed_password,
@@ -995,15 +1034,18 @@ def create_account():
             "Email": Email
         }
 
-
+        # Insert the additional_info dictionary into the SignUpRequests table
         conn = connection()
         cursor = conn.cursor()
         cursor.execute("""INSERT INTO dbo.SignUpRequests (additional_info) VALUES (?)""", str(additional_info))
         conn.commit()
         conn.close()
 
+        # Return a message indicating the request has been submitted
         return jsonify({"message": "Request submitted. Please check your email for a reply in 7-14 days."})
+    # Invalid request method
     return jsonify({"error": "Invalid request method."})
+
 
 
 
@@ -1046,112 +1088,148 @@ def create_account():
 
 
 
+# Route for musician login API
 @app.route('/api/musician_login', methods=['POST'])
 def api_musician_login():
+    # Retrieve JSON data from the request object
     data = request.get_json()
+
+    # Extract the username and password from the JSON data
     username = data['username']
     password = data['password']
+
+    # Hash the password using SHA256
     hashpassword = sha256(password.encode('utf-8')).hexdigest()
 
+    # Create a database connection and execute a query to retrieve a musician by username
     conn = connection()
     cursor = conn.cursor()
     query = "SELECT * FROM dbo.MusicianLogin WHERE username = ?"
     cursor.execute(query, (username,))
 
+    # Fetch the musician from the result of the query
     musician = cursor.fetchone()
+
+    # Close the database connection
     conn.close()
 
+    # Check if the musician exists and the password is correct
     if musician and musician[2] == hashpassword:
+        # If the musician exists and the password is correct, create a session for the musician
         session['logged_in'] = True
         session['username'] = username
         return jsonify({"success": True})
     else:
+        # If the musician does not exist or the password is incorrect, set the session to not logged in
         session['logged_in'] = False
         return jsonify({"success": False}), 401
 
+
+# Route for musician login screen
 @app.route('/musician_login')
 def musician_login():
     return render_template('musicianLoginScreen.html')
 
+
+# Route for musician logout
 @app.route('/musician_logout')
 def musician_logout():
+    # Clear the musician's session
     session.clear()
     return redirect(url_for('musician_login'))
 
 
+# Route to retrieve a musician by username
 @app.route('/get_musician_by_username', methods=['POST'])
 def get_musician_by_username():
+    # Retrieve the username from the form data
     username = request.form.get("username")
+
+    # Create a database connection and execute a query to retrieve a musician by username
     conn = connection()
     cursor = conn.cursor()
-
-    # Fetch musician from dbo.MusicanLogin by username
     cursor.execute("SELECT * FROM dbo.MusicianLogin WHERE username = ?", (username,))
     musician_login = cursor.fetchone()
 
     if musician_login:
+        # If a musician is found, retrieve the corresponding candidate from the Candidates table
         musician_id = musician_login[0]
-
-        # Fetch the matching candidate from dbo.Candidates
         cursor.execute("SELECT * FROM dbo.Candidates WHERE Id = ?", (musician_id,))
         candidate = cursor.fetchone()
 
         if candidate:
+            # If a candidate is found, create a dictionary with the candidate's details
             candidate_dict = {
-            "Id": candidate[0],
-            "Singer_Name": candidate[1],
-            "Preferred_Musical_Genre": candidate[2],
-            "Gender": candidate[3],
-            "Location_City": candidate[4],
-            "Country": candidate[5],
-            "Negotiable_Hourly_Rate": candidate[6]
+                "Id": candidate[0],
+                "Singer_Name": candidate[1],
+                "Preferred_Musical_Genre": candidate[2],
+                "Gender": candidate[3],
+                "Location_City": candidate[4],
+                "Country": candidate[5],
+                "Negotiable_Hourly_Rate": candidate[6]
             }
 
-
+            # Close the database connection and return the candidate dictionary as JSON
             conn.close()
             return jsonify(candidate_dict)
 
+    # If no musician or candidate is found, return an empty JSON object with status code 404
     conn.close()
     return jsonify({}), 404
 
+
+# Route to update a candidate's details
 @app.route('/updateCandidate/<int:Id>',methods = ['GET','POST'])
-#Function to edit singer details
 def updateCandidate(Id):
     cr = []
     conn = connection()
     cursor = conn.cursor()
+
     if request.method == 'GET':
+        # Retrieve the candidate's details from the Candidates table and render the update form with the details
         cursor.execute("SELECT * FROM dbo.Candidates WHERE Id = ?", Id)
         for row in cursor.fetchall():
             cr.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
         conn.close()
         return render_template("addSinger.html", singer = cr[0])
+    
     if request.method == 'POST':
+        # Retrieve the updated candidate details from the update form
         Singer_Name = request.form["Singer_Name"]
         Gender = request.form["Gender"]
         Preferred_Musical_Genre = request.form["Preferred_Musical_Genre"]
         Location_City = request.form["Location_City"]
         Country = request.form["Country"]
         Negotiable_Hourly_Rate = float(request.form["Negotiable_Hourly_Rate"])
+
+        # Execute an update query to update the candidate's details in the Candidates table
         cursor.execute("UPDATE dbo.Candidates SET Singer_Name = ?, Gender = ?, Preferred_Musical_Genre = ?, Location_City = ?, Country = ?, Negotiable_Hourly_Rate = ? WHERE Id = ?", Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate, Id)
         conn.commit()
-        conn.close()
-        return redirect('/musicians')
 
-    @app.route('/deleteCandidate/<int:Id>')
-    def deleteCandidate(Id):
-        conn = connection()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM dbo.Candidates WHERE Id = ?", Id)
-        conn.commit()
+        # Close the database connection and redirect to the musicians page
         conn.close()
         return redirect('/musicians')
 
 
-############### Externals Portal ###################
+# Route to delete a candidate from the Candidates table
+@app.route('/deleteCandidate/<int:Id>')
+def deleteCandidate(Id):
+    # Create a database connection and execute a delete query to delete the candidate from the Candidates table
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM dbo.Candidates WHERE Id = ?", Id)
+    conn.commit()
 
+    # Close the database connection and redirect to the musicians page
+    conn.close()
+    return redirect('/musicians')
+
+############### EXTERNALS PORTAL ##############
+
+# Route to display the externals portal
 @app.route('/externals')
 def externals():
+    # Retrieve all candidates from the Candidates table and render the externals page with the candidates list
     candidates_list = []
     conn = connection()
     cursor = conn.cursor()
@@ -1160,6 +1238,7 @@ def externals():
         candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6], "Email": row[7]})
     conn.close()
     return render_template("externals.html", candidates_list = candidates_list)
+
 
 
 if __name__ == '__main__':
