@@ -34,6 +34,8 @@
     <Folder Include="templates\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Procfile" />
+    <Content Include="requirements.txt" />
     <Content Include="static\logo.png" />
     <Content Include="templates\addAdmin.html" />
     <Content Include="templates\addExternal.html" />
