@@ -90,6 +90,7 @@
                     <th scope="col">Location/City</th>
                     <th scope="col">Country</th>
                     <th scope="col">Negotiable Hourly Rate</th>
+                    <th scope="col">Email</th>
                     <th scope="col">Edit</th>
                     <th scope="col">Delete</th>
                 </tr>
@@ -151,6 +152,10 @@
                     const rateTd = document.createElement('td');
                     rateTd.textContent = musician.Negotiable_Hourly_Rate;
                     tr.appendChild(rateTd);
+
+                    const emailTd = document.createElement('td');
+                    emailTd.textContent = musician.Email;
+                    tr.appendChild(emailTd);
 
                     const editTd = document.createElement('td');
                     // Create an edit link with the musician's ID as a parameter

@@ -118,6 +118,7 @@
                     <th scope="col">Location/City</th>
                     <th scope="col">Country</th>
                     <th scope="col">Negotiable Hourly Rate</th>
+                    <th scope="col">Email</th>
                     <th scope="col">Edit</th>
                     <th scope="col">Delete</th>
                 </tr>
@@ -132,6 +133,7 @@
                     <td>{{ singer.Location_City }}</td>
                     <td>{{ singer.Country }}</td>
                     <td>{{ singer.Negotiable_Hourly_Rate }}</td>
+                    <td>{{ singer.Email }}</td>
                     <td><a href='updateSinger/{{ singer.Id }}'>Edit</a></td>
                     <td><a href='deleteSinger/{{ singer.Id }}'>Delete</a></td>
                 </tr>
@@ -369,6 +371,7 @@
                                         <td>${singer.Location_City}</td>
                                         <td>${singer.Country}</td>
                                         <td>${singer.Negotiable_Hourly_Rate}</td>
+                                        <td>${singer.Email}</td>
                                         <td><a href='updateSinger/${singer.Id}'>Edit</a></td>
                                         <td><a href='deleteSinger/${singer.Id}'>Delete</a></td>
                                     </tr>`;

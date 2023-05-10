@@ -1,3 +1,5 @@
+import re
+from urllib import response
 import pyodbc
 import smtplib
 from datetime import datetime
@@ -20,11 +22,14 @@ candidates_list = []
 
 #Populate data from Database
 def connection():    
-    conn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};'
-                                  'Server=(LocalDB)\MSSQLLocalDB;'
-                                  'Database=Sangeet;'
-                                  'Integrated Security=true'
-                                  'AttachDbFileName="D:\Programming Project\Sangeet.mdf"')
+    conn = pyodbc.connect('Driver={ODBC Driver 18 for SQL Server};'
+                          'Server=tcp:sangeetpak.database.windows.net,1433;'
+                          'Database=Sangeet;'
+                          'Uid=sangeetadmin;'
+                          'Pwd={Rishworth2022};'
+                          'Encrypt=yes;'
+                          'TrustServerCertificate=no;'
+                          'Connection Timeout=30;')
     return conn
 
 
@@ -109,7 +114,7 @@ def get_singers():
     cursor.execute("SELECT * FROM dbo.Candidates")
     # Iterate over the list of singers and append the data to the candidates_list
     for row in cursor.fetchall():
-        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6], "Email": row [7]})
     conn.close()
     # Return the candidates_list in JSON format
     return jsonify(candidates_list)
@@ -841,9 +846,10 @@ def addSinger():
         Location_City = request.form["Location_City"]
         Country = request.form["Country"]
         Negotiable_Hourly_Rate = float(request.form["Negotiable_Hourly_Rate"])
+        Email = request.form["Email"]
         conn = connection()
         cursor = conn.cursor()
-        cursor.execute("""SET IDENTITY_INSERT dbo.Candidates OFF INSERT INTO dbo.Candidates (Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate) VALUES (?, ?, ?, ?, ?, ?) SET IDENTITY_INSERT dbo.Candidates OFF""", Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate)
+        cursor.execute("""SET IDENTITY_INSERT dbo.Candidates OFF INSERT INTO dbo.Candidates (Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate, Email) VALUES (?, ?, ?, ?, ?, ?, ?) SET IDENTITY_INSERT dbo.Candidates OFF""", Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate, Email)
         conn.commit()
         conn.close()
         return redirect('/admin')
@@ -876,7 +882,7 @@ def searchResults():
     # Render the searchResults.html template with the retrieved results
     return render_template('searchResults.html', results=searchResults)
 
-# Function to search songs based on filters
+# Function to search singers based on filters
 def search_songs(filters):
     # Construct the base query
     query = "SELECT * FROM dbo.Candidates"
@@ -889,7 +895,7 @@ def search_songs(filters):
     if filters['Preferred_Musical_Genre']:
         conditions.append("Preferred_Musical_Genre LIKE '%{}%'".format(filters['Preferred_Musical_Genre']))
     if filters['Location_City']:
-        conditions.append("genre LIKE '%{}%'".format(filters['Location_City']))
+        conditions.append("Location_City LIKE '%{}%'".format(filters['Location_City']))
     if filters['Country']:
         conditions.append("Country = '{}'".format(filters['Country']))
     if filters['Negotiable_Hourly_Rate']:
@@ -906,7 +912,7 @@ def search_songs(filters):
     cursor = conn.cursor()
     cursor.execute(query)
     for row in cursor.fetchall():
-        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+        candidates_list.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6], "Email": row[7]})
     conn.close()
     # Return the retrieved list of candidates
     return candidates_list
@@ -922,7 +928,7 @@ def updateSinger(Id):
     if request.method == 'GET':
         cursor.execute("SELECT * FROM dbo.Candidates WHERE Id = ?", Id)
         for row in cursor.fetchall():
-            cr.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Neg    tiatable_Hourly_Rate": row[6]})
+            cr.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6], "Email": row[7]})
         conn.close()
         # Render the addSinger.html template with the current values of the singer
         return render_template("addSinger.html", singer = cr[0])
@@ -934,9 +940,10 @@ def updateSinger(Id):
         Preferred_Musical_Genre = request.form["Preferred_Musical_Genre"]
         Location_City = request.form["Location_City"]
         Country = request.form["Country"]
-        Negotiable_Hourly_Rate = float(request.form["Negotiable_Hourly_Rate"])
+        Negotiable_Hourly_Rate = request.form["Negotiable_Hourly_Rate"]
+        Email = request.form["Email"]
         # Update the singer's details in the database
-        cursor.execute("UPDATE dbo.Candidates SET Singer_Name = ?, Gender = ?, Preferred_Musical_Genre = ?, Location_City = ?, Country = ?, Negotiable_Hourly_Rate = ? WHERE Id = ?", Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate, Id)
+        cursor.execute("UPDATE dbo.Candidates SET Singer_Name = ?, Gender = ?, Preferred_Musical_Genre = ?, Location_City = ?, Country = ?, Negotiable_Hourly_Rate = ?, Email = ? WHERE Id = ?", Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate, Email, Id)
         conn.commit()
         conn.close()
         # Redirect to the admin page
@@ -964,7 +971,8 @@ def musicians():
     # Render the musicians.html template with the user's username
     return render_template("musicians.html", username=session['username'])
 
-# Function to validate the musician registration form
+
+
 def validate_create_account_form(data):
     # List of required form fields
     required_fields = [
@@ -972,25 +980,46 @@ def validate_create_account_form(data):
         "Gender", "Preferred_Musical_Genre", "Location_City", "Country",
         "Negotiable_Hourly_Rate", "Social_Media", "Email"
     ]
+
     # Check if all required fields are present and not empty
     for field in required_fields:
         if field not in data or not data[field].strip():
             return False
+
     # Check if the password and confirm password fields match
     if data["password"] != data["confirm_password"]:
         return False
+
+    # Check if the password is at least 8 characters long and contains at least one lowercase letter, one uppercase letter, and one digit
+    if len(data["password"]) < 8 or not re.search(r'[a-z]', data["password"]) or not re.search(r'[A-Z]', data["password"]) or not re.search(r'\d', data["password"]):
+        return False
+
     try:
         # Check if the date of birth is in the correct format
         datetime.strptime(data["dob"], "%Y-%m-%d")
     except ValueError:
         return False
+
+    # Don't turn on, might cause confusion
+    ## Check if the gender is valid (assuming only "Male", "Female", and "Other" are valid)
+    #if data["Gender"] not in ["Male", "Female", "Other"]:
+    #    return False
+
     try:
-        # Check if the hourly rate can be converted to a float
-        float(data["Negotiable_Hourly_Rate"])
+        # Check if the hourly rate can be converted to a float and is positive
+        rate = float(data["Negotiable_Hourly_Rate"])
+        if rate < 0:
+            return False
     except ValueError:
         return False
+
+    # Check if the email address is in a valid format
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", data["Email"]):
+        return False
+
     # Form is valid
     return True
+
 
 # Route for creating a new musician account
 @app.route('/musician/create_account', methods = ['GET', 'POST'])
@@ -1001,6 +1030,7 @@ def create_account():
     # Submit the musician registration form
     if request.method == 'POST':
         data = request.json
+        print(data)
         # Validate the form data
         if not validate_create_account_form(data):
             return jsonify({"error": "Invalid form data."}), 400
@@ -1166,7 +1196,8 @@ def get_musician_by_username():
                 "Gender": candidate[3],
                 "Location_City": candidate[4],
                 "Country": candidate[5],
-                "Negotiable_Hourly_Rate": candidate[6]
+                "Negotiable_Hourly_Rate": candidate[6],
+                "Email": candidate[7]
             }
 
             # Close the database connection and return the candidate dictionary as JSON
@@ -1189,7 +1220,7 @@ def updateCandidate(Id):
         # Retrieve the candidate's details from the Candidates table and render the update form with the details
         cursor.execute("SELECT * FROM dbo.Candidates WHERE Id = ?", Id)
         for row in cursor.fetchall():
-            cr.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6]})
+            cr.append({"Id": row[0], "Singer_Name": row[1], "Preferred_Musical_Genre": row[2], "Gender": row[3], "Location_City": row[4], "Country": row[5], "Negotiable_Hourly_Rate": row[6], "Email": row[7]})
         conn.close()
         return render_template("addSinger.html", singer = cr[0])
     
@@ -1201,9 +1232,10 @@ def updateCandidate(Id):
         Location_City = request.form["Location_City"]
         Country = request.form["Country"]
         Negotiable_Hourly_Rate = float(request.form["Negotiable_Hourly_Rate"])
+        Email = request.form["Email"]
 
         # Execute an update query to update the candidate's details in the Candidates table
-        cursor.execute("UPDATE dbo.Candidates SET Singer_Name = ?, Gender = ?, Preferred_Musical_Genre = ?, Location_City = ?, Country = ?, Negotiable_Hourly_Rate = ? WHERE Id = ?", Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate, Id)
+        cursor.execute("UPDATE dbo.Candidates SET Singer_Name = ?, Gender = ?, Preferred_Musical_Genre = ?, Location_City = ?, Country = ?, Negotiable_Hourly_Rate = ?, Email = ? WHERE Id = ?", Singer_Name, Gender, Preferred_Musical_Genre, Location_City, Country, Negotiable_Hourly_Rate, Email, Id)
         conn.commit()
 
         # Close the database connection and redirect to the musicians page
