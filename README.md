@@ -1,7 +1,7 @@
 # Sangeet: Bridging Musicians with Opportunities
 
 ## 🎵 Overview
-Sangeet is a web platform tailored for Sangeet Pakistan, aiming to connect talented musicians with potential opportunities. With an extensive frontend driven by HTML and CSS, and a streamlined backend, this project showcases the prowess of integrating user-centric design with effective data management.
+Sangeet's App is a web platform tailored for Sangeet Pakistan, aiming to connect talented musicians with potential opportunities. With an extensive frontend driven by HTML and CSS, and a streamlined backend, this project showcases the prowess of integrating user-centric design with effective data management.
 
 ## 🎤 Background
 Amidst the rich tapestry of Pakistan's musical talent, there's a dearth of platforms that directly link musicians to opportunities. Sangeet stands as a beacon, ensuring that talent meets opportunity without compromise on user privacy.
